@@ -204,6 +204,9 @@ def calc_covar(Q, E, w, Qpara, Qperp):
 			Q4_Q -= Qmean_Q
 
 
+	np.savetxt('resplot_res_matrix.txt', Qres)
+	np.savetxt('resplot_cov_matrix.txt', Qcov)
+
 	return [Qres_Q, Q4_Q, Qmean_Q]
 
 
