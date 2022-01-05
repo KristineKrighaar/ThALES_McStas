@@ -2,7 +2,7 @@
  * Format:     ANSI C source code
  * Creator:    McStas <http://www.mcstas.org>
  * Instrument: ThALES_resolution_v2.instr (ThALES_double_peak10)
- * Date:       Tue Dec  7 11:32:50 2021
+ * Date:       Wed Jan  5 10:43:35 2022
  * File:       ./ThALES_resolution_v2.c
  * Compile:    cc -o ThALES_double_peak10.out ./ThALES_resolution_v2.c 
  * CFLAGS=
@@ -7426,6 +7426,23 @@ double tx,ty,tz;    /* target coords */
 };
 #line 7427 "./ThALES_resolution_v2.c"
 
+/* Shared user declarations for all components 'V_sample'. */
+#line 100 "V_sample.comp"
+struct StructVarsV
+{
+double  sigma_a; /* Absorption cross section per atom (barns) */
+    double  sigma_i; /* Incoherent scattering cross section per atom (barns) */
+    double  rho;     /* Density of atoms (AA-3) */
+    double  my_s;
+    double  my_a_v;
+    int     shapetyp;    /* 0 double well cylynder, 1 box,  3 sphere */
+    double  distance;    /* when non zero, gives rect target distance */
+    double  aw,ah;       /* rectangular angular dimensions */
+    double  xw,yh;       /* rectangular metrical dimensions */
+    double  tx,ty,tz;    /* target coords */
+  };
+#line 7444 "./ThALES_resolution_v2.c"
+
 /* Shared user declarations for all components 'Res_monitor'. */
 #line 77 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../monitors/Res_monitor.comp"
 /*******************************************************************************
@@ -9366,7 +9383,7 @@ void Monitor_nD_McDisplay(MonitornD_Defines_type *DEFS,
 
 /* end of monitor_nd-lib.c */
 
-#line 9369 "./ThALES_resolution_v2.c"
+#line 9386 "./ThALES_resolution_v2.c"
 
 /* Instrument parameters. */
 MCNUM mcipThALES_dE;
@@ -9405,7 +9422,7 @@ struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
 #define q_x_elastic mcipq_x_elastic
 #define q_z_elastic mcipq_z_elastic
 #define SAMPLE mcipSAMPLE
-#line 41 "ThALES_resolution_v2.instr"
+#line 42 "ThALES_resolution_v2.instr"
   
   /* HCS (H5) source 'Measured' parameters */
   double sT3,sI3;
@@ -9445,7 +9462,7 @@ struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
   int elastic_flag_instr_1;
   int elastic_flag_instr_2;
 
-#line 9448 "./ThALES_resolution_v2.c"
+#line 9465 "./ThALES_resolution_v2.c"
 #undef SAMPLE
 #undef q_z_elastic
 #undef q_x_elastic
@@ -9461,17 +9478,17 @@ struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
 
 /* neutron state table at each component input (local coords) */
 /* [x, y, z, vx, vy, vz, t, sx, sy, sz, p] */
-MCNUM mccomp_storein[11*33];
+MCNUM mccomp_storein[11*34];
 /* Components position table (absolute and relative coords) */
-Coords mccomp_posa[33];
-Coords mccomp_posr[33];
+Coords mccomp_posa[34];
+Coords mccomp_posr[34];
 /* Counter for each comp to check for inactive ones */
-MCNUM  mcNCounter[33];
-MCNUM  mcPCounter[33];
-MCNUM  mcP2Counter[33];
-#define mcNUMCOMP 32 /* number of components */
+MCNUM  mcNCounter[34];
+MCNUM  mcPCounter[34];
+MCNUM  mcP2Counter[34];
+#define mcNUMCOMP 33 /* number of components */
 /* Counter for PROP ABSORB */
-MCNUM  mcAbsorbProp[33];
+MCNUM  mcAbsorbProp[34];
 /* Flag true when previous component acted on the neutron (SCATTER) */
 MCNUM mcScattered=0;
 /* Flag true when neutron should be restored (RESTORE) */
@@ -9782,7 +9799,39 @@ MCNUM mccres_sample_yheight;
 MCNUM mccres_sample_zdepth;
 int mccres_sample_target_index;
 
-/* Setting parameters for component 'after_sample_slit' [23]. */
+/* Setting parameters for component 'v_sample' [22]. */
+MCNUM mccv_sample_radius;
+MCNUM mccv_sample_thickness;
+MCNUM mccv_sample_zdepth;
+MCNUM mccv_sample_Vc;
+MCNUM mccv_sample_sigma_abs;
+MCNUM mccv_sample_sigma_inc;
+MCNUM mccv_sample_radius_i;
+MCNUM mccv_sample_radius_o;
+MCNUM mccv_sample_h;
+MCNUM mccv_sample_focus_r;
+MCNUM mccv_sample_pack;
+MCNUM mccv_sample_frac;
+MCNUM mccv_sample_f_QE;
+MCNUM mccv_sample_gamma;
+MCNUM mccv_sample_target_x;
+MCNUM mccv_sample_target_y;
+MCNUM mccv_sample_target_z;
+MCNUM mccv_sample_focus_xw;
+MCNUM mccv_sample_focus_yh;
+MCNUM mccv_sample_focus_aw;
+MCNUM mccv_sample_focus_ah;
+MCNUM mccv_sample_xwidth;
+MCNUM mccv_sample_yheight;
+MCNUM mccv_sample_zthick;
+MCNUM mccv_sample_rad_sphere;
+MCNUM mccv_sample_sig_a;
+MCNUM mccv_sample_sig_i;
+MCNUM mccv_sample_V0;
+int mccv_sample_target_index;
+MCNUM mccv_sample_multiples;
+
+/* Setting parameters for component 'after_sample_slit' [24]. */
 MCNUM mccafter_sample_slit_xmin;
 MCNUM mccafter_sample_slit_xmax;
 MCNUM mccafter_sample_slit_ymin;
@@ -9791,7 +9840,7 @@ MCNUM mccafter_sample_slit_radius;
 MCNUM mccafter_sample_slit_xwidth;
 MCNUM mccafter_sample_slit_yheight;
 
-/* Setting parameters for component 'PSD_analyzer' [25]. */
+/* Setting parameters for component 'PSD_analyzer' [26]. */
 int mccPSD_analyzer_nx;
 int mccPSD_analyzer_ny;
 char mccPSD_analyzer_filename[16384];
@@ -9804,7 +9853,7 @@ MCNUM mccPSD_analyzer_yheight;
 MCNUM mccPSD_analyzer_restore_neutron;
 int mccPSD_analyzer_nowritefile;
 
-/* Setting parameters for component 'analyzer' [26]. */
+/* Setting parameters for component 'analyzer' [27]. */
 char mccanalyzer_reflect[16384];
 char mccanalyzer_transmit[16384];
 MCNUM mccanalyzer_zwidth;
@@ -9826,7 +9875,7 @@ MCNUM mccanalyzer_height;
 MCNUM mccanalyzer_verbose;
 MCNUM mccanalyzer_order;
 
-/* Setting parameters for component 'slit' [28]. */
+/* Setting parameters for component 'slit' [29]. */
 MCNUM mccslit_xmin;
 MCNUM mccslit_xmax;
 MCNUM mccslit_ymin;
@@ -9835,7 +9884,7 @@ MCNUM mccslit_radius;
 MCNUM mccslit_xwidth;
 MCNUM mccslit_yheight;
 
-/* Setting parameters for component 'PSD_det' [29]. */
+/* Setting parameters for component 'PSD_det' [30]. */
 int mccPSD_det_nx;
 int mccPSD_det_ny;
 char mccPSD_det_filename[16384];
@@ -9848,9 +9897,9 @@ MCNUM mccPSD_det_yheight;
 MCNUM mccPSD_det_restore_neutron;
 int mccPSD_det_nowritefile;
 
-/* Definition parameters for component 'res_monitor' [30]. */
+/* Definition parameters for component 'res_monitor' [31]. */
 #define mccres_monitor_res_sample_comp res_sample
-/* Setting parameters for component 'res_monitor' [30]. */
+/* Setting parameters for component 'res_monitor' [31]. */
 char mccres_monitor_filename[16384];
 char mccres_monitor_options[16384];
 MCNUM mccres_monitor_xwidth;
@@ -9866,7 +9915,7 @@ MCNUM mccres_monitor_zmax;
 MCNUM mccres_monitor_bufsize;
 MCNUM mccres_monitor_restore_neutron;
 
-/* Setting parameters for component 'detector_all' [31]. */
+/* Setting parameters for component 'detector_all' [32]. */
 MCNUM mccdetector_all_xmin;
 MCNUM mccdetector_all_xmax;
 MCNUM mccdetector_all_ymin;
@@ -9900,7 +9949,7 @@ double IntermediateCnts;
 time_t StartTime;
 time_t EndTime;
 time_t CurrentTime;
-#line 9903 "./ThALES_resolution_v2.c"
+#line 9952 "./ThALES_resolution_v2.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -9984,7 +10033,7 @@ time_t CurrentTime;
   double pTable_dymin;
   double pTable_dymax;
 
-#line 9987 "./ThALES_resolution_v2.c"
+#line 10036 "./ThALES_resolution_v2.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -10087,7 +10136,7 @@ time_t CurrentTime;
 #line 334 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
   Gravity_guide_Vars_type GVars;
   t_Table pTable;
-#line 10090 "./ThALES_resolution_v2.c"
+#line 10139 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -10187,7 +10236,7 @@ time_t CurrentTime;
 #line 334 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
   Gravity_guide_Vars_type GVars;
   t_Table pTable;
-#line 10190 "./ThALES_resolution_v2.c"
+#line 10239 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -10271,7 +10320,7 @@ time_t CurrentTime;
 #line 334 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
   Gravity_guide_Vars_type GVars;
   t_Table pTable;
-#line 10274 "./ThALES_resolution_v2.c"
+#line 10323 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -10363,7 +10412,7 @@ time_t CurrentTime;
 #line 334 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
   Gravity_guide_Vars_type GVars;
   t_Table pTable;
-#line 10366 "./ThALES_resolution_v2.c"
+#line 10415 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -10483,7 +10532,7 @@ char file_name[1024];
 char *ep;
 FILE *num;
 double rotation_h, rotation_v;
-#line 10486 "./ThALES_resolution_v2.c"
+#line 10535 "./ThALES_resolution_v2.c"
 #undef curvature_v
 #undef curvature
 #undef segno
@@ -10590,7 +10639,7 @@ double rotation_h, rotation_v;
 #line 57 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../monitors/L_monitor.comp"
 double L_N[nL];
 double L_p[nL], L_p2[nL];
-#line 10593 "./ThALES_resolution_v2.c"
+#line 10642 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef Lmax
@@ -10664,7 +10713,7 @@ double L_p[nL], L_p2[nL];
   double row,col;
   double* tiltH;
   double* tiltV;
-#line 10667 "./ThALES_resolution_v2.c"
+#line 10716 "./ThALES_resolution_v2.c"
 #undef order
 #undef verbose
 #undef height
@@ -10757,7 +10806,7 @@ double L_p[nL], L_p2[nL];
 double E_N[nE];
 double E_p[nE], E_p2[nE];
 double S_p, S_pE, S_pE2;
-#line 10760 "./ThALES_resolution_v2.c"
+#line 10809 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef Emax
@@ -10802,7 +10851,7 @@ double S_p, S_pE, S_pE2;
   DArray2d PSD_N;
   DArray2d PSD_p;
   DArray2d PSD_p2;
-#line 10805 "./ThALES_resolution_v2.c"
+#line 10854 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef yheight
@@ -10852,7 +10901,7 @@ double S_p, S_pE, S_pE2;
 #define target_index mccres_sample_target_index
 #line 84 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../samples/Res_sample.comp"
 struct Res_sample_struct res_struct;
-#line 10855 "./ThALES_resolution_v2.c"
+#line 10904 "./ThALES_resolution_v2.c"
 #undef target_index
 #undef zdepth
 #undef yheight
@@ -10874,18 +10923,91 @@ struct Res_sample_struct res_struct;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'Sample_Out' [22]. */
-#define mccompcurname  Sample_Out
-#define mccompcurtype  Arm
+/* User declarations for component 'v_sample' [22]. */
+#define mccompcurname  v_sample
+#define mccompcurtype  V_sample
 #define mccompcurindex 22
+#define VarsV mccv_sample_VarsV
+#define radius mccv_sample_radius
+#define thickness mccv_sample_thickness
+#define zdepth mccv_sample_zdepth
+#define Vc mccv_sample_Vc
+#define sigma_abs mccv_sample_sigma_abs
+#define sigma_inc mccv_sample_sigma_inc
+#define radius_i mccv_sample_radius_i
+#define radius_o mccv_sample_radius_o
+#define h mccv_sample_h
+#define focus_r mccv_sample_focus_r
+#define pack mccv_sample_pack
+#define frac mccv_sample_frac
+#define f_QE mccv_sample_f_QE
+#define gamma mccv_sample_gamma
+#define target_x mccv_sample_target_x
+#define target_y mccv_sample_target_y
+#define target_z mccv_sample_target_z
+#define focus_xw mccv_sample_focus_xw
+#define focus_yh mccv_sample_focus_yh
+#define focus_aw mccv_sample_focus_aw
+#define focus_ah mccv_sample_focus_ah
+#define xwidth mccv_sample_xwidth
+#define yheight mccv_sample_yheight
+#define zthick mccv_sample_zthick
+#define rad_sphere mccv_sample_rad_sphere
+#define sig_a mccv_sample_sig_a
+#define sig_i mccv_sample_sig_i
+#define V0 mccv_sample_V0
+#define target_index mccv_sample_target_index
+#define multiples mccv_sample_multiples
+#line 117 "V_sample.comp"
+  struct StructVarsV VarsV;
+#line 10963 "./ThALES_resolution_v2.c"
+#undef multiples
+#undef target_index
+#undef V0
+#undef sig_i
+#undef sig_a
+#undef rad_sphere
+#undef zthick
+#undef yheight
+#undef xwidth
+#undef focus_ah
+#undef focus_aw
+#undef focus_yh
+#undef focus_xw
+#undef target_z
+#undef target_y
+#undef target_x
+#undef gamma
+#undef f_QE
+#undef frac
+#undef pack
+#undef focus_r
+#undef h
+#undef radius_o
+#undef radius_i
+#undef sigma_inc
+#undef sigma_abs
+#undef Vc
+#undef zdepth
+#undef thickness
+#undef radius
+#undef VarsV
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'after_sample_slit' [23]. */
+/* User declarations for component 'Sample_Out' [23]. */
+#define mccompcurname  Sample_Out
+#define mccompcurtype  Arm
+#define mccompcurindex 23
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+/* User declarations for component 'after_sample_slit' [24]. */
 #define mccompcurname  after_sample_slit
 #define mccompcurtype  Slit
-#define mccompcurindex 23
+#define mccompcurindex 24
 #define xmin mccafter_sample_slit_xmin
 #define xmax mccafter_sample_slit_xmax
 #define ymin mccafter_sample_slit_ymin
@@ -10904,18 +11026,18 @@ struct Res_sample_struct res_struct;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'Ana_Cradle' [24]. */
+/* User declarations for component 'Ana_Cradle' [25]. */
 #define mccompcurname  Ana_Cradle
 #define mccompcurtype  Arm
-#define mccompcurindex 24
+#define mccompcurindex 25
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'PSD_analyzer' [25]. */
+/* User declarations for component 'PSD_analyzer' [26]. */
 #define mccompcurname  PSD_analyzer
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 25
+#define mccompcurindex 26
 #define PSD_N mccPSD_analyzer_PSD_N
 #define PSD_p mccPSD_analyzer_PSD_p
 #define PSD_p2 mccPSD_analyzer_PSD_p2
@@ -10934,7 +11056,7 @@ struct Res_sample_struct res_struct;
   DArray2d PSD_N;
   DArray2d PSD_p;
   DArray2d PSD_p2;
-#line 10937 "./ThALES_resolution_v2.c"
+#line 11059 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef yheight
@@ -10953,10 +11075,10 @@ struct Res_sample_struct res_struct;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'analyzer' [26]. */
+/* User declarations for component 'analyzer' [27]. */
 #define mccompcurname  analyzer
 #define mccompcurtype  Monochromator_curved
-#define mccompcurindex 26
+#define mccompcurindex 27
 #define mos_rms_y mccanalyzer_mos_rms_y
 #define mos_rms_z mccanalyzer_mos_rms_z
 #define mos_rms_max mccanalyzer_mos_rms_max
@@ -10999,7 +11121,7 @@ struct Res_sample_struct res_struct;
   double row,col;
   double* tiltH;
   double* tiltV;
-#line 11002 "./ThALES_resolution_v2.c"
+#line 11124 "./ThALES_resolution_v2.c"
 #undef order
 #undef verbose
 #undef height
@@ -11036,18 +11158,18 @@ struct Res_sample_struct res_struct;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'Ana_Out' [27]. */
+/* User declarations for component 'Ana_Out' [28]. */
 #define mccompcurname  Ana_Out
 #define mccompcurtype  Arm
-#define mccompcurindex 27
+#define mccompcurindex 28
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'slit' [28]. */
+/* User declarations for component 'slit' [29]. */
 #define mccompcurname  slit
 #define mccompcurtype  Slit
-#define mccompcurindex 28
+#define mccompcurindex 29
 #define xmin mccslit_xmin
 #define xmax mccslit_xmax
 #define ymin mccslit_ymin
@@ -11066,10 +11188,10 @@ struct Res_sample_struct res_struct;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'PSD_det' [29]. */
+/* User declarations for component 'PSD_det' [30]. */
 #define mccompcurname  PSD_det
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 29
+#define mccompcurindex 30
 #define PSD_N mccPSD_det_PSD_N
 #define PSD_p mccPSD_det_PSD_p
 #define PSD_p2 mccPSD_det_PSD_p2
@@ -11088,7 +11210,7 @@ struct Res_sample_struct res_struct;
   DArray2d PSD_N;
   DArray2d PSD_p;
   DArray2d PSD_p2;
-#line 11091 "./ThALES_resolution_v2.c"
+#line 11213 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef yheight
@@ -11107,10 +11229,10 @@ struct Res_sample_struct res_struct;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'res_monitor' [30]. */
+/* User declarations for component 'res_monitor' [31]. */
 #define mccompcurname  res_monitor
 #define mccompcurtype  Res_monitor
-#define mccompcurindex 30
+#define mccompcurindex 31
 #define res_sample_comp mccres_monitor_res_sample_comp
 #define DEFS mccres_monitor_DEFS
 #define Vars mccres_monitor_Vars
@@ -11133,7 +11255,7 @@ struct Res_sample_struct res_struct;
 MonitornD_Defines_type DEFS;
 MonitornD_Variables_type Vars;
 long buffer_index;
-#line 11136 "./ThALES_resolution_v2.c"
+#line 11258 "./ThALES_resolution_v2.c"
 #undef restore_neutron
 #undef bufsize
 #undef zmax
@@ -11156,10 +11278,10 @@ long buffer_index;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'detector_all' [31]. */
+/* User declarations for component 'detector_all' [32]. */
 #define mccompcurname  detector_all
 #define mccompcurtype  Monitor
-#define mccompcurindex 31
+#define mccompcurindex 32
 #define Nsum mccdetector_all_Nsum
 #define psum mccdetector_all_psum
 #define p2sum mccdetector_all_p2sum
@@ -11173,7 +11295,7 @@ long buffer_index;
 #line 52 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor.comp"
 double Nsum;
 double psum, p2sum;
-#line 11176 "./ThALES_resolution_v2.c"
+#line 11298 "./ThALES_resolution_v2.c"
 #undef restore_neutron
 #undef yheight
 #undef xwidth
@@ -11230,6 +11352,8 @@ Coords mcposasample_arm, mcposrsample_arm;
 Rotation mcrotasample_arm, mcrotrsample_arm;
 Coords mcposares_sample, mcposrres_sample;
 Rotation mcrotares_sample, mcrotrres_sample;
+Coords mcposav_sample, mcposrv_sample;
+Rotation mcrotav_sample, mcrotrv_sample;
 Coords mcposaSample_Out, mcposrSample_Out;
 Rotation mcrotaSample_Out, mcrotrSample_Out;
 Coords mcposaafter_sample_slit, mcposrafter_sample_slit;
@@ -11268,7 +11392,7 @@ void mcinit(void) {
 #define q_x_elastic mcipq_x_elastic
 #define q_z_elastic mcipq_z_elastic
 #define SAMPLE mcipSAMPLE
-#line 82 "ThALES_resolution_v2.instr"
+#line 83 "ThALES_resolution_v2.instr"
 {
 
   sT3=413.5, sI3=10.22e12;
@@ -11349,7 +11473,7 @@ void mcinit(void) {
   A3_offset=atan(q_z_elastic/q_x_elastic)*RAD2DEG;
 
 }
-#line 11352 "./ThALES_resolution_v2.c"
+#line 11476 "./ThALES_resolution_v2.c"
 #undef SAMPLE
 #undef q_z_elastic
 #undef q_x_elastic
@@ -11383,23 +11507,23 @@ void mcinit(void) {
   mccOrigin_flag_save = 0;
 #line 39 "ThALES_resolution_v2.instr"
   mccOrigin_minutes = 0;
-#line 11386 "./ThALES_resolution_v2.c"
+#line 11510 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("Origin (Init:Place/Rotate)");
   rot_set_rotation(mcrotaOrigin,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11393 "./ThALES_resolution_v2.c"
+#line 11517 "./ThALES_resolution_v2.c"
   rot_copy(mcrotrOrigin, mcrotaOrigin);
   mcposaOrigin = coords_set(
-#line 169 "ThALES_resolution_v2.instr"
+#line 170 "ThALES_resolution_v2.instr"
     0,
-#line 169 "ThALES_resolution_v2.instr"
+#line 170 "ThALES_resolution_v2.instr"
     0,
-#line 169 "ThALES_resolution_v2.instr"
+#line 170 "ThALES_resolution_v2.instr"
     0);
-#line 11402 "./ThALES_resolution_v2.c"
+#line 11526 "./ThALES_resolution_v2.c"
   mctc1 = coords_neg(mcposaOrigin);
   mcposrOrigin = rot_apply(mcrotaOrigin, mctc1);
   mcDEBUG_COMPONENT("Origin", mcposaOrigin, mcrotaOrigin)
@@ -11416,35 +11540,35 @@ void mcinit(void) {
   if("NULL") strncpy(mccHCS_xdiv_file, "NULL" ? "NULL" : "", 16384); else mccHCS_xdiv_file[0]='\0';
 #line 129 "ThALES_resolution_v2.instr"
   if("NULL") strncpy(mccHCS_ydiv_file, "NULL" ? "NULL" : "", 16384); else mccHCS_ydiv_file[0]='\0';
-#line 172 "ThALES_resolution_v2.instr"
+#line 173 "ThALES_resolution_v2.instr"
   mccHCS_radius = 0.21 / 2;
-#line 174 "ThALES_resolution_v2.instr"
-  mccHCS_dist = 2.155;
 #line 175 "ThALES_resolution_v2.instr"
-  mccHCS_focus_xw = 0.170;
+  mccHCS_dist = 2.155;
 #line 176 "ThALES_resolution_v2.instr"
+  mccHCS_focus_xw = 0.170;
+#line 177 "ThALES_resolution_v2.instr"
   mccHCS_focus_yh = 0.120;
 #line 130 "ThALES_resolution_v2.instr"
   mccHCS_focus_aw = 0;
 #line 130 "ThALES_resolution_v2.instr"
   mccHCS_focus_ah = 0;
-#line 177 "ThALES_resolution_v2.instr"
-  mccHCS_E0 = mcipEi;
 #line 178 "ThALES_resolution_v2.instr"
+  mccHCS_E0 = mcipEi;
+#line 179 "ThALES_resolution_v2.instr"
   mccHCS_dE = mcipThALES_dE;
 #line 131 "ThALES_resolution_v2.instr"
   mccHCS_lambda0 = 0;
 #line 131 "ThALES_resolution_v2.instr"
   mccHCS_dlambda = 0;
-#line 180 "ThALES_resolution_v2.instr"
+#line 181 "ThALES_resolution_v2.instr"
   mccHCS_I1 = sI1;
 #line 132 "ThALES_resolution_v2.instr"
   mccHCS_yheight = 0.1;
 #line 132 "ThALES_resolution_v2.instr"
   mccHCS_xwidth = 0.1;
-#line 185 "ThALES_resolution_v2.instr"
+#line 186 "ThALES_resolution_v2.instr"
   mccHCS_verbose = 0;
-#line 179 "ThALES_resolution_v2.instr"
+#line 180 "ThALES_resolution_v2.instr"
   mccHCS_T1 = sT1;
 #line 133 "ThALES_resolution_v2.instr"
   mccHCS_flux_file_perAA = 0;
@@ -11458,37 +11582,37 @@ void mcinit(void) {
   mccHCS_Emin = 0;
 #line 134 "ThALES_resolution_v2.instr"
   mccHCS_Emax = 0;
-#line 181 "ThALES_resolution_v2.instr"
-  mccHCS_T2 = sT2;
 #line 182 "ThALES_resolution_v2.instr"
-  mccHCS_I2 = sI2;
+  mccHCS_T2 = sT2;
 #line 183 "ThALES_resolution_v2.instr"
-  mccHCS_T3 = sT3;
+  mccHCS_I2 = sI2;
 #line 184 "ThALES_resolution_v2.instr"
+  mccHCS_T3 = sT3;
+#line 185 "ThALES_resolution_v2.instr"
   mccHCS_I3 = sI3;
-#line 173 "ThALES_resolution_v2.instr"
+#line 174 "ThALES_resolution_v2.instr"
   mccHCS_zdepth = 0.15;
 #line 134 "ThALES_resolution_v2.instr"
   mccHCS_target_index = + 1;
-#line 11473 "./ThALES_resolution_v2.c"
+#line 11597 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("HCS (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11480 "./ThALES_resolution_v2.c"
+#line 11604 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaOrigin, mcrotaHCS);
   rot_transpose(mcrotaOrigin, mctr1);
   rot_mul(mcrotaHCS, mctr1, mcrotrHCS);
   mctc1 = coords_set(
-#line 186 "ThALES_resolution_v2.instr"
+#line 187 "ThALES_resolution_v2.instr"
     0,
-#line 186 "ThALES_resolution_v2.instr"
+#line 187 "ThALES_resolution_v2.instr"
     0,
-#line 186 "ThALES_resolution_v2.instr"
+#line 187 "ThALES_resolution_v2.instr"
     0);
-#line 11491 "./ThALES_resolution_v2.c"
+#line 11615 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaOrigin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaHCS = coords_add(mcposaOrigin, mctc2);
@@ -11508,18 +11632,18 @@ void mcinit(void) {
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11511 "./ThALES_resolution_v2.c"
+#line 11635 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaHCS, mcrotaH5);
   rot_transpose(mcrotaHCS, mctr1);
   rot_mul(mcrotaH5, mctr1, mcrotrH5);
   mctc1 = coords_set(
-#line 189 "ThALES_resolution_v2.instr"
+#line 190 "ThALES_resolution_v2.instr"
     0,
-#line 189 "ThALES_resolution_v2.instr"
+#line 190 "ThALES_resolution_v2.instr"
     0,
-#line 189 "ThALES_resolution_v2.instr"
+#line 190 "ThALES_resolution_v2.instr"
     2.155);
-#line 11522 "./ThALES_resolution_v2.c"
+#line 11646 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaHCS, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH5 = coords_add(mcposaHCS, mctc2);
@@ -11533,25 +11657,25 @@ void mcinit(void) {
     /* Component H5_rect. */
   /* Setting parameters for component H5_rect. */
   SIG_MESSAGE("H5_rect (Init:SetPar)");
-#line 191 "ThALES_resolution_v2.instr"
+#line 192 "ThALES_resolution_v2.instr"
   mccH5_rect_w1 = 0.170;
-#line 191 "ThALES_resolution_v2.instr"
+#line 192 "ThALES_resolution_v2.instr"
   mccH5_rect_h1 = 0.12;
 #line 113 "ThALES_resolution_v2.instr"
   mccH5_rect_w2 = 0;
 #line 113 "ThALES_resolution_v2.instr"
   mccH5_rect_h2 = 0;
-#line 191 "ThALES_resolution_v2.instr"
+#line 192 "ThALES_resolution_v2.instr"
   mccH5_rect_l = 1.0;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH5_rect_R0 = gR0;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH5_rect_Qc = gQc;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH5_rect_alpha = gAlpha;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH5_rect_m = 2;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH5_rect_W = gW;
 #line 114 "ThALES_resolution_v2.instr"
   mccH5_rect_nslit = 1;
@@ -11601,25 +11725,25 @@ void mcinit(void) {
   mccH5_rect_phase = 0;
 #line 119 "ThALES_resolution_v2.instr"
   if("NULL") strncpy(mccH5_rect_reflect, "NULL" ? "NULL" : "", 16384); else mccH5_rect_reflect[0]='\0';
-#line 11604 "./ThALES_resolution_v2.c"
+#line 11728 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("H5_rect (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11611 "./ThALES_resolution_v2.c"
+#line 11735 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaHCS, mcrotaH5_rect);
   rot_transpose(mcrotaH5, mctr1);
   rot_mul(mcrotaH5_rect, mctr1, mcrotrH5_rect);
   mctc1 = coords_set(
-#line 193 "ThALES_resolution_v2.instr"
+#line 194 "ThALES_resolution_v2.instr"
     0,
-#line 193 "ThALES_resolution_v2.instr"
+#line 194 "ThALES_resolution_v2.instr"
     0,
-#line 193 "ThALES_resolution_v2.instr"
+#line 194 "ThALES_resolution_v2.instr"
     2.155);
-#line 11622 "./ThALES_resolution_v2.c"
+#line 11746 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaHCS, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH5_rect = coords_add(mcposaHCS, mctc2);
@@ -11636,24 +11760,24 @@ void mcinit(void) {
 
   SIG_MESSAGE("H53_origin (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-#line 198 "ThALES_resolution_v2.instr"
+#line 199 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD,
-#line 198 "ThALES_resolution_v2.instr"
+#line 199 "ThALES_resolution_v2.instr"
     (1.5)*DEG2RAD,
-#line 198 "ThALES_resolution_v2.instr"
+#line 199 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD);
-#line 11645 "./ThALES_resolution_v2.c"
+#line 11769 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH5, mcrotaH53_origin);
   rot_transpose(mcrotaH5_rect, mctr1);
   rot_mul(mcrotaH53_origin, mctr1, mcrotrH53_origin);
   mctc1 = coords_set(
-#line 197 "ThALES_resolution_v2.instr"
+#line 198 "ThALES_resolution_v2.instr"
     0.17 / 2 -0.06 / 2,
-#line 197 "ThALES_resolution_v2.instr"
+#line 198 "ThALES_resolution_v2.instr"
     0,
-#line 197 "ThALES_resolution_v2.instr"
+#line 198 "ThALES_resolution_v2.instr"
     1 + gGap);
-#line 11656 "./ThALES_resolution_v2.c"
+#line 11780 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH5, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_origin = coords_add(mcposaH5, mctc2);
@@ -11673,18 +11797,18 @@ void mcinit(void) {
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11676 "./ThALES_resolution_v2.c"
+#line 11800 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_origin, mcrotaH53_start);
   rot_transpose(mcrotaH53_origin, mctr1);
   rot_mul(mcrotaH53_start, mctr1, mcrotrH53_start);
   mctc1 = coords_set(
-#line 204 "ThALES_resolution_v2.instr"
+#line 205 "ThALES_resolution_v2.instr"
     0,
-#line 204 "ThALES_resolution_v2.instr"
+#line 205 "ThALES_resolution_v2.instr"
     0,
-#line 204 "ThALES_resolution_v2.instr"
+#line 205 "ThALES_resolution_v2.instr"
     0);
-#line 11687 "./ThALES_resolution_v2.c"
+#line 11811 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_origin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_start = coords_add(mcposaH53_origin, mctc2);
@@ -11698,25 +11822,25 @@ void mcinit(void) {
     /* Component H53_inpile. */
   /* Setting parameters for component H53_inpile. */
   SIG_MESSAGE("H53_inpile (Init:SetPar)");
-#line 206 "ThALES_resolution_v2.instr"
+#line 207 "ThALES_resolution_v2.instr"
   mccH53_inpile_w1 = 0.06;
-#line 191 "ThALES_resolution_v2.instr"
+#line 192 "ThALES_resolution_v2.instr"
   mccH53_inpile_h1 = 0.12;
 #line 113 "ThALES_resolution_v2.instr"
   mccH53_inpile_w2 = 0;
 #line 113 "ThALES_resolution_v2.instr"
   mccH53_inpile_h2 = 0;
-#line 206 "ThALES_resolution_v2.instr"
+#line 207 "ThALES_resolution_v2.instr"
   mccH53_inpile_l = 4.930 -3.155;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_inpile_R0 = gR0;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_inpile_Qc = gQc;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_inpile_alpha = gAlpha;
-#line 206 "ThALES_resolution_v2.instr"
+#line 207 "ThALES_resolution_v2.instr"
   mccH53_inpile_m = 3;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_inpile_W = gW;
 #line 114 "ThALES_resolution_v2.instr"
   mccH53_inpile_nslit = 1;
@@ -11766,25 +11890,25 @@ void mcinit(void) {
   mccH53_inpile_phase = 0;
 #line 119 "ThALES_resolution_v2.instr"
   if("NULL") strncpy(mccH53_inpile_reflect, "NULL" ? "NULL" : "", 16384); else mccH53_inpile_reflect[0]='\0';
-#line 11769 "./ThALES_resolution_v2.c"
+#line 11893 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("H53_inpile (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11776 "./ThALES_resolution_v2.c"
+#line 11900 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_start, mcrotaH53_inpile);
   rot_transpose(mcrotaH53_start, mctr1);
   rot_mul(mcrotaH53_inpile, mctr1, mcrotrH53_inpile);
   mctc1 = coords_set(
-#line 207 "ThALES_resolution_v2.instr"
+#line 208 "ThALES_resolution_v2.instr"
     0,
-#line 207 "ThALES_resolution_v2.instr"
+#line 208 "ThALES_resolution_v2.instr"
     0,
-#line 207 "ThALES_resolution_v2.instr"
+#line 208 "ThALES_resolution_v2.instr"
     0);
-#line 11787 "./ThALES_resolution_v2.c"
+#line 11911 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_start, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_inpile = coords_add(mcposaH53_start, mctc2);
@@ -11798,25 +11922,25 @@ void mcinit(void) {
     /* Component H53_Obt. */
   /* Setting parameters for component H53_Obt. */
   SIG_MESSAGE("H53_Obt (Init:SetPar)");
-#line 209 "ThALES_resolution_v2.instr"
+#line 210 "ThALES_resolution_v2.instr"
   mccH53_Obt_w1 = 0.06;
-#line 191 "ThALES_resolution_v2.instr"
+#line 192 "ThALES_resolution_v2.instr"
   mccH53_Obt_h1 = 0.12;
 #line 113 "ThALES_resolution_v2.instr"
   mccH53_Obt_w2 = 0;
 #line 113 "ThALES_resolution_v2.instr"
   mccH53_Obt_h2 = 0;
-#line 209 "ThALES_resolution_v2.instr"
+#line 210 "ThALES_resolution_v2.instr"
   mccH53_Obt_l = 3;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_Obt_R0 = gR0;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_Obt_Qc = gQc;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_Obt_alpha = gAlpha;
-#line 209 "ThALES_resolution_v2.instr"
+#line 210 "ThALES_resolution_v2.instr"
   mccH53_Obt_m = 3;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_Obt_W = gW;
 #line 114 "ThALES_resolution_v2.instr"
   mccH53_Obt_nslit = 1;
@@ -11866,25 +11990,25 @@ void mcinit(void) {
   mccH53_Obt_phase = 0;
 #line 119 "ThALES_resolution_v2.instr"
   if("NULL") strncpy(mccH53_Obt_reflect, "NULL" ? "NULL" : "", 16384); else mccH53_Obt_reflect[0]='\0';
-#line 11869 "./ThALES_resolution_v2.c"
+#line 11993 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("H53_Obt (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11876 "./ThALES_resolution_v2.c"
+#line 12000 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_inpile, mcrotaH53_Obt);
   rot_transpose(mcrotaH53_inpile, mctr1);
   rot_mul(mcrotaH53_Obt, mctr1, mcrotrH53_Obt);
   mctc1 = coords_set(
-#line 210 "ThALES_resolution_v2.instr"
+#line 211 "ThALES_resolution_v2.instr"
     0,
-#line 210 "ThALES_resolution_v2.instr"
+#line 211 "ThALES_resolution_v2.instr"
     0,
-#line 210 "ThALES_resolution_v2.instr"
+#line 211 "ThALES_resolution_v2.instr"
     Al_Thickness + 0.015 + 4.930 -3.155);
-#line 11887 "./ThALES_resolution_v2.c"
+#line 12011 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_inpile, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_Obt = coords_add(mcposaH53_inpile, mctc2);
@@ -11904,18 +12028,18 @@ void mcinit(void) {
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11907 "./ThALES_resolution_v2.c"
+#line 12031 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_Obt, mcrotaH53_Obt_Out);
   rot_transpose(mcrotaH53_Obt, mctr1);
   rot_mul(mcrotaH53_Obt_Out, mctr1, mcrotrH53_Obt_Out);
   mctc1 = coords_set(
-#line 213 "ThALES_resolution_v2.instr"
+#line 214 "ThALES_resolution_v2.instr"
     0,
-#line 213 "ThALES_resolution_v2.instr"
+#line 214 "ThALES_resolution_v2.instr"
     0,
-#line 213 "ThALES_resolution_v2.instr"
+#line 214 "ThALES_resolution_v2.instr"
     3 + 0.04);
-#line 11918 "./ThALES_resolution_v2.c"
+#line 12042 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_Obt, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_Obt_Out = coords_add(mcposaH53_Obt, mctc2);
@@ -11929,25 +12053,25 @@ void mcinit(void) {
     /* Component H53_VSComC1. */
   /* Setting parameters for component H53_VSComC1. */
   SIG_MESSAGE("H53_VSComC1 (Init:SetPar)");
-#line 206 "ThALES_resolution_v2.instr"
+#line 207 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_w1 = 0.06;
-#line 191 "ThALES_resolution_v2.instr"
+#line 192 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_h1 = 0.12;
 #line 113 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_w2 = 0;
 #line 113 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_h2 = 0;
-#line 216 "ThALES_resolution_v2.instr"
+#line 217 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_l = 7;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_R0 = gR0;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_Qc = gQc;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_alpha = gAlpha;
-#line 206 "ThALES_resolution_v2.instr"
+#line 207 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_m = 3;
-#line 192 "ThALES_resolution_v2.instr"
+#line 193 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_W = gW;
 #line 114 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_nslit = 1;
@@ -11989,7 +12113,7 @@ void mcinit(void) {
   mccH53_VSComC1_chamfers_lr = 0;
 #line 118 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_chamfers_tb = 0;
-#line 216 "ThALES_resolution_v2.instr"
+#line 217 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_nelements = 7;
 #line 119 "ThALES_resolution_v2.instr"
   mccH53_VSComC1_nu = 0;
@@ -11997,25 +12121,25 @@ void mcinit(void) {
   mccH53_VSComC1_phase = 0;
 #line 119 "ThALES_resolution_v2.instr"
   if("NULL") strncpy(mccH53_VSComC1_reflect, "NULL" ? "NULL" : "", 16384); else mccH53_VSComC1_reflect[0]='\0';
-#line 12000 "./ThALES_resolution_v2.c"
+#line 12124 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("H53_VSComC1 (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12007 "./ThALES_resolution_v2.c"
+#line 12131 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_Obt, mcrotaH53_VSComC1);
   rot_transpose(mcrotaH53_Obt_Out, mctr1);
   rot_mul(mcrotaH53_VSComC1, mctr1, mcrotrH53_VSComC1);
   mctc1 = coords_set(
-#line 217 "ThALES_resolution_v2.instr"
+#line 218 "ThALES_resolution_v2.instr"
     0,
-#line 217 "ThALES_resolution_v2.instr"
+#line 218 "ThALES_resolution_v2.instr"
     0,
-#line 217 "ThALES_resolution_v2.instr"
+#line 218 "ThALES_resolution_v2.instr"
     3 + 0.075);
-#line 12018 "./ThALES_resolution_v2.c"
+#line 12142 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_Obt, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_VSComC1 = coords_add(mcposaH53_Obt, mctc2);
@@ -12029,63 +12153,63 @@ void mcinit(void) {
     /* Component H53_Nose. */
   /* Setting parameters for component H53_Nose. */
   SIG_MESSAGE("H53_Nose (Init:SetPar)");
-#line 224 "ThALES_resolution_v2.instr"
+#line 225 "ThALES_resolution_v2.instr"
   if("parabolical") strncpy(mccH53_Nose_option, "parabolical" ? "parabolical" : "", 16384); else mccH53_Nose_option[0]='\0';
-#line 222 "ThALES_resolution_v2.instr"
+#line 223 "ThALES_resolution_v2.instr"
   mccH53_Nose_w1 = 0.06;
-#line 222 "ThALES_resolution_v2.instr"
+#line 223 "ThALES_resolution_v2.instr"
   mccH53_Nose_h1 = 0.12;
-#line 223 "ThALES_resolution_v2.instr"
+#line 224 "ThALES_resolution_v2.instr"
   mccH53_Nose_l = 2.0;
-#line 223 "ThALES_resolution_v2.instr"
+#line 224 "ThALES_resolution_v2.instr"
   mccH53_Nose_linw = 0.0;
-#line 223 "ThALES_resolution_v2.instr"
+#line 224 "ThALES_resolution_v2.instr"
   mccH53_Nose_loutw = 0.7;
-#line 223 "ThALES_resolution_v2.instr"
+#line 224 "ThALES_resolution_v2.instr"
   mccH53_Nose_linh = 0.0;
-#line 224 "ThALES_resolution_v2.instr"
+#line 225 "ThALES_resolution_v2.instr"
   mccH53_Nose_louth = 0.0;
-#line 224 "ThALES_resolution_v2.instr"
+#line 225 "ThALES_resolution_v2.instr"
   mccH53_Nose_R0 = gR0;
-#line 225 "ThALES_resolution_v2.instr"
+#line 226 "ThALES_resolution_v2.instr"
   mccH53_Nose_Qcx = gQc;
-#line 225 "ThALES_resolution_v2.instr"
+#line 226 "ThALES_resolution_v2.instr"
   mccH53_Nose_Qcy = gQc;
-#line 225 "ThALES_resolution_v2.instr"
+#line 226 "ThALES_resolution_v2.instr"
   mccH53_Nose_alphax = gAlpha;
-#line 226 "ThALES_resolution_v2.instr"
+#line 227 "ThALES_resolution_v2.instr"
   mccH53_Nose_alphay = gAlpha;
-#line 226 "ThALES_resolution_v2.instr"
+#line 227 "ThALES_resolution_v2.instr"
   mccH53_Nose_W = gW;
-#line 227 "ThALES_resolution_v2.instr"
+#line 228 "ThALES_resolution_v2.instr"
   mccH53_Nose_mx = 3;
-#line 227 "ThALES_resolution_v2.instr"
+#line 228 "ThALES_resolution_v2.instr"
   mccH53_Nose_my = 3;
-#line 227 "ThALES_resolution_v2.instr"
+#line 228 "ThALES_resolution_v2.instr"
   mccH53_Nose_segno = 20;
 #line 83 "ThALES_resolution_v2.instr"
   mccH53_Nose_curvature = 0;
 #line 83 "ThALES_resolution_v2.instr"
   mccH53_Nose_curvature_v = 0;
-#line 12070 "./ThALES_resolution_v2.c"
+#line 12194 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("H53_Nose (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12077 "./ThALES_resolution_v2.c"
+#line 12201 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_VSComC1, mcrotaH53_Nose);
   rot_transpose(mcrotaH53_VSComC1, mctr1);
   rot_mul(mcrotaH53_Nose, mctr1, mcrotrH53_Nose);
   mctc1 = coords_set(
-#line 228 "ThALES_resolution_v2.instr"
+#line 229 "ThALES_resolution_v2.instr"
     0,
-#line 228 "ThALES_resolution_v2.instr"
+#line 229 "ThALES_resolution_v2.instr"
     0,
-#line 228 "ThALES_resolution_v2.instr"
+#line 229 "ThALES_resolution_v2.instr"
     7 + 0.01);
-#line 12088 "./ThALES_resolution_v2.c"
+#line 12212 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_VSComC1, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_Nose = coords_add(mcposaH53_VSComC1, mctc2);
@@ -12109,29 +12233,29 @@ void mcinit(void) {
   mccbefore_monochromator_slit_ymax = 0;
 #line 46 "ThALES_resolution_v2.instr"
   mccbefore_monochromator_slit_radius = 0;
-#line 234 "ThALES_resolution_v2.instr"
+#line 235 "ThALES_resolution_v2.instr"
   mccbefore_monochromator_slit_xwidth = 0.04;
-#line 234 "ThALES_resolution_v2.instr"
+#line 235 "ThALES_resolution_v2.instr"
   mccbefore_monochromator_slit_yheight = 0.12;
-#line 12116 "./ThALES_resolution_v2.c"
+#line 12240 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("before_monochromator_slit (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12123 "./ThALES_resolution_v2.c"
+#line 12247 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_Nose, mcrotabefore_monochromator_slit);
   rot_transpose(mcrotaH53_Nose, mctr1);
   rot_mul(mcrotabefore_monochromator_slit, mctr1, mcrotrbefore_monochromator_slit);
   mctc1 = coords_set(
-#line 235 "ThALES_resolution_v2.instr"
+#line 236 "ThALES_resolution_v2.instr"
     0,
-#line 235 "ThALES_resolution_v2.instr"
+#line 236 "ThALES_resolution_v2.instr"
     0,
-#line 235 "ThALES_resolution_v2.instr"
+#line 236 "ThALES_resolution_v2.instr"
     2.3);
-#line 12134 "./ThALES_resolution_v2.c"
+#line 12258 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_Nose, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposabefore_monochromator_slit = coords_add(mcposaH53_Nose, mctc2);
@@ -12145,7 +12269,7 @@ void mcinit(void) {
     /* Component l_monitor. */
   /* Setting parameters for component l_monitor. */
   SIG_MESSAGE("l_monitor (Init:SetPar)");
-#line 239 "ThALES_resolution_v2.instr"
+#line 240 "ThALES_resolution_v2.instr"
   if("lambda_slit_mono") strncpy(mccl_monitor_filename, "lambda_slit_mono" ? "lambda_slit_mono" : "", 16384); else mccl_monitor_filename[0]='\0';
 #line 50 "ThALES_resolution_v2.instr"
   mccl_monitor_xmin = -0.05;
@@ -12155,37 +12279,37 @@ void mcinit(void) {
   mccl_monitor_ymin = -0.05;
 #line 50 "ThALES_resolution_v2.instr"
   mccl_monitor_ymax = 0.05;
-#line 240 "ThALES_resolution_v2.instr"
-  mccl_monitor_xwidth = 0.5;
 #line 241 "ThALES_resolution_v2.instr"
-  mccl_monitor_yheight = 0.5;
+  mccl_monitor_xwidth = 0.5;
 #line 242 "ThALES_resolution_v2.instr"
-  mccl_monitor_Lmin = 0;
+  mccl_monitor_yheight = 0.5;
 #line 243 "ThALES_resolution_v2.instr"
-  mccl_monitor_Lmax = 10;
+  mccl_monitor_Lmin = 0;
 #line 244 "ThALES_resolution_v2.instr"
+  mccl_monitor_Lmax = 10;
+#line 245 "ThALES_resolution_v2.instr"
   mccl_monitor_restore_neutron = 1;
 #line 51 "ThALES_resolution_v2.instr"
   mccl_monitor_nowritefile = 0;
-#line 12170 "./ThALES_resolution_v2.c"
+#line 12294 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("l_monitor (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12177 "./ThALES_resolution_v2.c"
+#line 12301 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotabefore_monochromator_slit, mcrotal_monitor);
   rot_transpose(mcrotabefore_monochromator_slit, mctr1);
   rot_mul(mcrotal_monitor, mctr1, mcrotrl_monitor);
   mctc1 = coords_set(
-#line 245 "ThALES_resolution_v2.instr"
+#line 246 "ThALES_resolution_v2.instr"
     0,
-#line 245 "ThALES_resolution_v2.instr"
+#line 246 "ThALES_resolution_v2.instr"
     0,
-#line 245 "ThALES_resolution_v2.instr"
+#line 246 "ThALES_resolution_v2.instr"
     0.001);
-#line 12188 "./ThALES_resolution_v2.c"
+#line 12312 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotabefore_monochromator_slit, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposal_monitor = coords_add(mcposabefore_monochromator_slit, mctc2);
@@ -12205,18 +12329,18 @@ void mcinit(void) {
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12208 "./ThALES_resolution_v2.c"
+#line 12332 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_Nose, mcrotaH53_ThALES_Monochromator_Cradle);
   rot_transpose(mcrotal_monitor, mctr1);
   rot_mul(mcrotaH53_ThALES_Monochromator_Cradle, mctr1, mcrotrH53_ThALES_Monochromator_Cradle);
   mctc1 = coords_set(
-#line 248 "ThALES_resolution_v2.instr"
+#line 249 "ThALES_resolution_v2.instr"
     0,
-#line 248 "ThALES_resolution_v2.instr"
+#line 249 "ThALES_resolution_v2.instr"
     0,
-#line 248 "ThALES_resolution_v2.instr"
+#line 249 "ThALES_resolution_v2.instr"
     2 + 2.3);
-#line 12219 "./ThALES_resolution_v2.c"
+#line 12343 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_Nose, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_ThALES_Monochromator_Cradle = coords_add(mcposaH53_Nose, mctc2);
@@ -12230,68 +12354,68 @@ void mcinit(void) {
     /* Component H53_ThALES_Monochromator. */
   /* Setting parameters for component H53_ThALES_Monochromator. */
   SIG_MESSAGE("H53_ThALES_Monochromator (Init:SetPar)");
-#line 254 "ThALES_resolution_v2.instr"
+#line 255 "ThALES_resolution_v2.instr"
   if("HOPG.rfl") strncpy(mccH53_ThALES_Monochromator_reflect, "HOPG.rfl" ? "HOPG.rfl" : "", 16384); else mccH53_ThALES_Monochromator_reflect[0]='\0';
-#line 254 "ThALES_resolution_v2.instr"
+#line 255 "ThALES_resolution_v2.instr"
   if("HOPG.trm") strncpy(mccH53_ThALES_Monochromator_transmit, "HOPG.trm" ? "HOPG.trm" : "", 16384); else mccH53_ThALES_Monochromator_transmit[0]='\0';
 #line 100 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_zwidth = 0.01;
 #line 100 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_yheight = 0.01;
-#line 252 "ThALES_resolution_v2.instr"
+#line 253 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_gap = 0.0005;
-#line 252 "ThALES_resolution_v2.instr"
+#line 253 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_NH = 13;
-#line 252 "ThALES_resolution_v2.instr"
+#line 253 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_NV = 13;
-#line 253 "ThALES_resolution_v2.instr"
-  mccH53_ThALES_Monochromator_mosaich = 30;
-#line 253 "ThALES_resolution_v2.instr"
-  mccH53_ThALES_Monochromator_mosaicv = 30;
 #line 254 "ThALES_resolution_v2.instr"
+  mccH53_ThALES_Monochromator_mosaich = 30;
+#line 254 "ThALES_resolution_v2.instr"
+  mccH53_ThALES_Monochromator_mosaicv = 30;
+#line 255 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_r0 = 1;
 #line 101 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_t0 = 1.0;
 #line 101 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_Q = 1.8734;
-#line 253 "ThALES_resolution_v2.instr"
+#line 254 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_RV = ThALES_RMV;
-#line 253 "ThALES_resolution_v2.instr"
+#line 254 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_RH = ThALES_RMH;
-#line 253 "ThALES_resolution_v2.instr"
+#line 254 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_DM = ThALES_DM;
 #line 102 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_mosaic = 0;
-#line 252 "ThALES_resolution_v2.instr"
+#line 253 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_width = 0.25;
-#line 252 "ThALES_resolution_v2.instr"
+#line 253 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_height = 0.2;
 #line 102 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_verbose = 0;
 #line 102 "ThALES_resolution_v2.instr"
   mccH53_ThALES_Monochromator_order = 0;
-#line 12273 "./ThALES_resolution_v2.c"
+#line 12397 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("H53_ThALES_Monochromator (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-#line 256 "ThALES_resolution_v2.instr"
+#line 257 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD,
-#line 256 "ThALES_resolution_v2.instr"
+#line 257 "ThALES_resolution_v2.instr"
     (ThALES_A1)*DEG2RAD,
-#line 256 "ThALES_resolution_v2.instr"
+#line 257 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD);
-#line 12283 "./ThALES_resolution_v2.c"
+#line 12407 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_ThALES_Monochromator_Cradle, mcrotaH53_ThALES_Monochromator);
   rot_transpose(mcrotaH53_ThALES_Monochromator_Cradle, mctr1);
   rot_mul(mcrotaH53_ThALES_Monochromator, mctr1, mcrotrH53_ThALES_Monochromator);
   mctc1 = coords_set(
-#line 255 "ThALES_resolution_v2.instr"
+#line 256 "ThALES_resolution_v2.instr"
     0,
-#line 255 "ThALES_resolution_v2.instr"
+#line 256 "ThALES_resolution_v2.instr"
     0,
-#line 255 "ThALES_resolution_v2.instr"
+#line 256 "ThALES_resolution_v2.instr"
     0);
-#line 12294 "./ThALES_resolution_v2.c"
+#line 12418 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_ThALES_Monochromator_Cradle, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_ThALES_Monochromator = coords_add(mcposaH53_ThALES_Monochromator_Cradle, mctc2);
@@ -12308,24 +12432,24 @@ void mcinit(void) {
 
   SIG_MESSAGE("H53_ThALES_Monochromator_Out (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-#line 263 "ThALES_resolution_v2.instr"
+#line 264 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD,
-#line 263 "ThALES_resolution_v2.instr"
+#line 264 "ThALES_resolution_v2.instr"
     (2 * ThALES_A1)*DEG2RAD,
-#line 263 "ThALES_resolution_v2.instr"
+#line 264 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD);
-#line 12317 "./ThALES_resolution_v2.c"
+#line 12441 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_ThALES_Monochromator_Cradle, mcrotaH53_ThALES_Monochromator_Out);
   rot_transpose(mcrotaH53_ThALES_Monochromator, mctr1);
   rot_mul(mcrotaH53_ThALES_Monochromator_Out, mctr1, mcrotrH53_ThALES_Monochromator_Out);
   mctc1 = coords_set(
-#line 262 "ThALES_resolution_v2.instr"
+#line 263 "ThALES_resolution_v2.instr"
     0,
-#line 262 "ThALES_resolution_v2.instr"
+#line 263 "ThALES_resolution_v2.instr"
     0,
-#line 262 "ThALES_resolution_v2.instr"
+#line 263 "ThALES_resolution_v2.instr"
     0);
-#line 12328 "./ThALES_resolution_v2.c"
+#line 12452 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_ThALES_Monochromator_Cradle, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH53_ThALES_Monochromator_Out = coords_add(mcposaH53_ThALES_Monochromator_Cradle, mctc2);
@@ -12349,29 +12473,29 @@ void mcinit(void) {
   mccbefore_sample_slit_ymax = 0;
 #line 46 "ThALES_resolution_v2.instr"
   mccbefore_sample_slit_radius = 0;
-#line 265 "ThALES_resolution_v2.instr"
+#line 266 "ThALES_resolution_v2.instr"
   mccbefore_sample_slit_xwidth = 0.03;
-#line 265 "ThALES_resolution_v2.instr"
+#line 266 "ThALES_resolution_v2.instr"
   mccbefore_sample_slit_yheight = 0.028;
-#line 12356 "./ThALES_resolution_v2.c"
+#line 12480 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("before_sample_slit (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12363 "./ThALES_resolution_v2.c"
+#line 12487 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_ThALES_Monochromator_Out, mcrotabefore_sample_slit);
   rot_transpose(mcrotaH53_ThALES_Monochromator_Out, mctr1);
   rot_mul(mcrotabefore_sample_slit, mctr1, mcrotrbefore_sample_slit);
   mctc1 = coords_set(
-#line 266 "ThALES_resolution_v2.instr"
+#line 267 "ThALES_resolution_v2.instr"
     0,
-#line 266 "ThALES_resolution_v2.instr"
+#line 267 "ThALES_resolution_v2.instr"
     0,
-#line 266 "ThALES_resolution_v2.instr"
+#line 267 "ThALES_resolution_v2.instr"
     ThALES_L -0.250);
-#line 12374 "./ThALES_resolution_v2.c"
+#line 12498 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_ThALES_Monochromator_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposabefore_sample_slit = coords_add(mcposaH53_ThALES_Monochromator_Out, mctc2);
@@ -12385,7 +12509,7 @@ void mcinit(void) {
     /* Component E_sample_mon. */
   /* Setting parameters for component E_sample_mon. */
   SIG_MESSAGE("E_sample_mon (Init:SetPar)");
-#line 269 "ThALES_resolution_v2.instr"
+#line 270 "ThALES_resolution_v2.instr"
   if("E_sample_mon") strncpy(mccE_sample_mon_filename, "E_sample_mon" ? "E_sample_mon" : "", 16384); else mccE_sample_mon_filename[0]='\0';
 #line 53 "ThALES_resolution_v2.instr"
   mccE_sample_mon_xmin = -0.05;
@@ -12395,37 +12519,37 @@ void mcinit(void) {
   mccE_sample_mon_ymin = -0.05;
 #line 53 "ThALES_resolution_v2.instr"
   mccE_sample_mon_ymax = 0.05;
-#line 269 "ThALES_resolution_v2.instr"
+#line 270 "ThALES_resolution_v2.instr"
   mccE_sample_mon_xwidth = 0.05;
-#line 270 "ThALES_resolution_v2.instr"
+#line 271 "ThALES_resolution_v2.instr"
   mccE_sample_mon_yheight = 0.05;
-#line 270 "ThALES_resolution_v2.instr"
+#line 271 "ThALES_resolution_v2.instr"
   mccE_sample_mon_Emin = mcipEi - mcipThALES_dE;
-#line 270 "ThALES_resolution_v2.instr"
+#line 271 "ThALES_resolution_v2.instr"
   mccE_sample_mon_Emax = mcipEi + mcipThALES_dE;
-#line 270 "ThALES_resolution_v2.instr"
+#line 271 "ThALES_resolution_v2.instr"
   mccE_sample_mon_restore_neutron = 1;
 #line 54 "ThALES_resolution_v2.instr"
   mccE_sample_mon_nowritefile = 0;
-#line 12410 "./ThALES_resolution_v2.c"
+#line 12534 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("E_sample_mon (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12417 "./ThALES_resolution_v2.c"
+#line 12541 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_ThALES_Monochromator_Out, mcrotaE_sample_mon);
   rot_transpose(mcrotabefore_sample_slit, mctr1);
   rot_mul(mcrotaE_sample_mon, mctr1, mcrotrE_sample_mon);
   mctc1 = coords_set(
-#line 271 "ThALES_resolution_v2.instr"
+#line 272 "ThALES_resolution_v2.instr"
     0,
-#line 271 "ThALES_resolution_v2.instr"
+#line 272 "ThALES_resolution_v2.instr"
     0,
-#line 271 "ThALES_resolution_v2.instr"
+#line 272 "ThALES_resolution_v2.instr"
     ThALES_L -0.050);
-#line 12428 "./ThALES_resolution_v2.c"
+#line 12552 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_ThALES_Monochromator_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaE_sample_mon = coords_add(mcposaH53_ThALES_Monochromator_Out, mctc2);
@@ -12439,11 +12563,11 @@ void mcinit(void) {
     /* Component PSD_sample_mon. */
   /* Setting parameters for component PSD_sample_mon. */
   SIG_MESSAGE("PSD_sample_mon (Init:SetPar)");
-#line 274 "ThALES_resolution_v2.instr"
-  mccPSD_sample_mon_nx = 200;
-#line 274 "ThALES_resolution_v2.instr"
-  mccPSD_sample_mon_ny = 200;
 #line 275 "ThALES_resolution_v2.instr"
+  mccPSD_sample_mon_nx = 200;
+#line 275 "ThALES_resolution_v2.instr"
+  mccPSD_sample_mon_ny = 200;
+#line 276 "ThALES_resolution_v2.instr"
   if("PSD_sample_mon.dat") strncpy(mccPSD_sample_mon_filename, "PSD_sample_mon.dat" ? "PSD_sample_mon.dat" : "", 16384); else mccPSD_sample_mon_filename[0]='\0';
 #line 51 "ThALES_resolution_v2.instr"
   mccPSD_sample_mon_xmin = -0.05;
@@ -12453,33 +12577,33 @@ void mcinit(void) {
   mccPSD_sample_mon_ymin = -0.05;
 #line 51 "ThALES_resolution_v2.instr"
   mccPSD_sample_mon_ymax = 0.05;
-#line 275 "ThALES_resolution_v2.instr"
+#line 276 "ThALES_resolution_v2.instr"
   mccPSD_sample_mon_xwidth = 0.05;
-#line 275 "ThALES_resolution_v2.instr"
+#line 276 "ThALES_resolution_v2.instr"
   mccPSD_sample_mon_yheight = 0.05;
-#line 274 "ThALES_resolution_v2.instr"
+#line 275 "ThALES_resolution_v2.instr"
   mccPSD_sample_mon_restore_neutron = 1;
 #line 52 "ThALES_resolution_v2.instr"
   mccPSD_sample_mon_nowritefile = 0;
-#line 12464 "./ThALES_resolution_v2.c"
+#line 12588 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("PSD_sample_mon (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12471 "./ThALES_resolution_v2.c"
+#line 12595 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaE_sample_mon, mcrotaPSD_sample_mon);
   rot_transpose(mcrotaE_sample_mon, mctr1);
   rot_mul(mcrotaPSD_sample_mon, mctr1, mcrotrPSD_sample_mon);
   mctc1 = coords_set(
-#line 276 "ThALES_resolution_v2.instr"
+#line 277 "ThALES_resolution_v2.instr"
     0,
-#line 276 "ThALES_resolution_v2.instr"
+#line 277 "ThALES_resolution_v2.instr"
     0,
-#line 276 "ThALES_resolution_v2.instr"
+#line 277 "ThALES_resolution_v2.instr"
     0.001);
-#line 12482 "./ThALES_resolution_v2.c"
+#line 12606 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaE_sample_mon, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaPSD_sample_mon = coords_add(mcposaE_sample_mon, mctc2);
@@ -12499,18 +12623,18 @@ void mcinit(void) {
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12502 "./ThALES_resolution_v2.c"
+#line 12626 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaH53_ThALES_Monochromator_Out, mcrotasample_arm);
   rot_transpose(mcrotaPSD_sample_mon, mctr1);
   rot_mul(mcrotasample_arm, mctr1, mcrotrsample_arm);
   mctc1 = coords_set(
-#line 279 "ThALES_resolution_v2.instr"
+#line 280 "ThALES_resolution_v2.instr"
     0,
-#line 279 "ThALES_resolution_v2.instr"
+#line 280 "ThALES_resolution_v2.instr"
     0,
-#line 279 "ThALES_resolution_v2.instr"
+#line 280 "ThALES_resolution_v2.instr"
     ThALES_L);
-#line 12513 "./ThALES_resolution_v2.c"
+#line 12637 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaH53_ThALES_Monochromator_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposasample_arm = coords_add(mcposaH53_ThALES_Monochromator_Out, mctc2);
@@ -12524,15 +12648,15 @@ void mcinit(void) {
     /* Component res_sample. */
   /* Setting parameters for component res_sample. */
   SIG_MESSAGE("res_sample (Init:SetPar)");
-#line 283 "ThALES_resolution_v2.instr"
+#line 284 "ThALES_resolution_v2.instr"
   mccres_sample_thickness = 0.001;
-#line 282 "ThALES_resolution_v2.instr"
+#line 283 "ThALES_resolution_v2.instr"
   mccres_sample_radius = 0.005;
 #line 64 "ThALES_resolution_v2.instr"
   mccres_sample_focus_r = 0.05;
-#line 284 "ThALES_resolution_v2.instr"
-  mccres_sample_E0 = 5;
 #line 285 "ThALES_resolution_v2.instr"
+  mccres_sample_E0 = 5;
+#line 286 "ThALES_resolution_v2.instr"
   mccres_sample_dE = 0.25;
 #line 65 "ThALES_resolution_v2.instr"
   mccres_sample_target_x = 0;
@@ -12540,9 +12664,9 @@ void mcinit(void) {
   mccres_sample_target_y = 0;
 #line 65 "ThALES_resolution_v2.instr"
   mccres_sample_target_z = .5;
-#line 286 "ThALES_resolution_v2.instr"
-  mccres_sample_focus_xw = 0.03;
 #line 287 "ThALES_resolution_v2.instr"
+  mccres_sample_focus_xw = 0.03;
+#line 288 "ThALES_resolution_v2.instr"
   mccres_sample_focus_yh = 0.04;
 #line 66 "ThALES_resolution_v2.instr"
   mccres_sample_focus_aw = 0;
@@ -12550,31 +12674,31 @@ void mcinit(void) {
   mccres_sample_focus_ah = 0;
 #line 66 "ThALES_resolution_v2.instr"
   mccres_sample_xwidth = 0;
-#line 288 "ThALES_resolution_v2.instr"
+#line 289 "ThALES_resolution_v2.instr"
   mccres_sample_yheight = 0.05;
 #line 66 "ThALES_resolution_v2.instr"
   mccres_sample_zdepth = 0;
-#line 289 "ThALES_resolution_v2.instr"
-  mccres_sample_target_index = 2;
-#line 12559 "./ThALES_resolution_v2.c"
+#line 290 "ThALES_resolution_v2.instr"
+  mccres_sample_target_index = 4;
+#line 12683 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("res_sample (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12566 "./ThALES_resolution_v2.c"
+#line 12690 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotasample_arm, mcrotares_sample);
   rot_transpose(mcrotasample_arm, mctr1);
   rot_mul(mcrotares_sample, mctr1, mcrotrres_sample);
   mctc1 = coords_set(
-#line 290 "ThALES_resolution_v2.instr"
+#line 291 "ThALES_resolution_v2.instr"
     0,
-#line 290 "ThALES_resolution_v2.instr"
+#line 291 "ThALES_resolution_v2.instr"
     0,
-#line 290 "ThALES_resolution_v2.instr"
+#line 291 "ThALES_resolution_v2.instr"
     0);
-#line 12577 "./ThALES_resolution_v2.c"
+#line 12701 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotasample_arm, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposares_sample = coords_add(mcposasample_arm, mctc2);
@@ -12585,40 +12709,132 @@ void mcinit(void) {
   mccomp_posr[21] = mcposrres_sample;
   mcNCounter[21]  = mcPCounter[21] = mcP2Counter[21] = 0;
   mcAbsorbProp[21]= 0;
+    /* Component v_sample. */
+  /* Setting parameters for component v_sample. */
+  SIG_MESSAGE("v_sample (Init:SetPar)");
+#line 304 "ThALES_resolution_v2.instr"
+  mccv_sample_radius = 0.005;
+#line 305 "ThALES_resolution_v2.instr"
+  mccv_sample_thickness = 0.001;
+#line 91 "ThALES_resolution_v2.instr"
+  mccv_sample_zdepth = 0;
+#line 91 "ThALES_resolution_v2.instr"
+  mccv_sample_Vc = 13.827;
+#line 91 "ThALES_resolution_v2.instr"
+  mccv_sample_sigma_abs = 5.08;
+#line 91 "ThALES_resolution_v2.instr"
+  mccv_sample_sigma_inc = 5.08;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_radius_i = 0;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_radius_o = 0;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_h = 0;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_focus_r = 0;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_pack = 1;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_frac = 1;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_f_QE = 0;
+#line 92 "ThALES_resolution_v2.instr"
+  mccv_sample_gamma = 0;
+#line 93 "ThALES_resolution_v2.instr"
+  mccv_sample_target_x = 0;
+#line 93 "ThALES_resolution_v2.instr"
+  mccv_sample_target_y = 0;
+#line 93 "ThALES_resolution_v2.instr"
+  mccv_sample_target_z = 0;
+#line 306 "ThALES_resolution_v2.instr"
+  mccv_sample_focus_xw = 0.03;
+#line 307 "ThALES_resolution_v2.instr"
+  mccv_sample_focus_yh = 0.04;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_focus_aw = 0;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_focus_ah = 0;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_xwidth = 0;
+#line 308 "ThALES_resolution_v2.instr"
+  mccv_sample_yheight = 0.05;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_zthick = 0;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_rad_sphere = 0;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_sig_a = 0;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_sig_i = 0;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_V0 = 0;
+#line 309 "ThALES_resolution_v2.instr"
+  mccv_sample_target_index = 3;
+#line 94 "ThALES_resolution_v2.instr"
+  mccv_sample_multiples = 1;
+#line 12775 "./ThALES_resolution_v2.c"
+
+  SIG_MESSAGE("v_sample (Init:Place/Rotate)");
+  rot_set_rotation(mctr1,
+    (0.0)*DEG2RAD,
+    (0.0)*DEG2RAD,
+    (0.0)*DEG2RAD);
+#line 12782 "./ThALES_resolution_v2.c"
+  rot_mul(mctr1, mcrotasample_arm, mcrotav_sample);
+  rot_transpose(mcrotares_sample, mctr1);
+  rot_mul(mcrotav_sample, mctr1, mcrotrv_sample);
+  mctc1 = coords_set(
+#line 310 "ThALES_resolution_v2.instr"
+    0,
+#line 310 "ThALES_resolution_v2.instr"
+    0,
+#line 310 "ThALES_resolution_v2.instr"
+    0);
+#line 12793 "./ThALES_resolution_v2.c"
+  rot_transpose(mcrotasample_arm, mctr1);
+  mctc2 = rot_apply(mctr1, mctc1);
+  mcposav_sample = coords_add(mcposasample_arm, mctc2);
+  mctc1 = coords_sub(mcposares_sample, mcposav_sample);
+  mcposrv_sample = rot_apply(mcrotav_sample, mctc1);
+  mcDEBUG_COMPONENT("v_sample", mcposav_sample, mcrotav_sample)
+  mccomp_posa[22] = mcposav_sample;
+  mccomp_posr[22] = mcposrv_sample;
+  mcNCounter[22]  = mcPCounter[22] = mcP2Counter[22] = 0;
+  mcAbsorbProp[22]= 0;
     /* Component Sample_Out. */
   /* Setting parameters for component Sample_Out. */
   SIG_MESSAGE("Sample_Out (Init:SetPar)");
 
   SIG_MESSAGE("Sample_Out (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-#line 304 "ThALES_resolution_v2.instr"
+#line 315 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD,
-#line 304 "ThALES_resolution_v2.instr"
+#line 315 "ThALES_resolution_v2.instr"
     (- mcipA4)*DEG2RAD,
-#line 304 "ThALES_resolution_v2.instr"
+#line 315 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD);
-#line 12600 "./ThALES_resolution_v2.c"
+#line 12816 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotasample_arm, mcrotaSample_Out);
-  rot_transpose(mcrotares_sample, mctr1);
+  rot_transpose(mcrotav_sample, mctr1);
   rot_mul(mcrotaSample_Out, mctr1, mcrotrSample_Out);
   mctc1 = coords_set(
-#line 303 "ThALES_resolution_v2.instr"
+#line 314 "ThALES_resolution_v2.instr"
     0,
-#line 303 "ThALES_resolution_v2.instr"
+#line 314 "ThALES_resolution_v2.instr"
     0,
-#line 303 "ThALES_resolution_v2.instr"
+#line 314 "ThALES_resolution_v2.instr"
     0);
-#line 12611 "./ThALES_resolution_v2.c"
+#line 12827 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotasample_arm, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaSample_Out = coords_add(mcposasample_arm, mctc2);
-  mctc1 = coords_sub(mcposares_sample, mcposaSample_Out);
+  mctc1 = coords_sub(mcposav_sample, mcposaSample_Out);
   mcposrSample_Out = rot_apply(mcrotaSample_Out, mctc1);
   mcDEBUG_COMPONENT("Sample_Out", mcposaSample_Out, mcrotaSample_Out)
-  mccomp_posa[22] = mcposaSample_Out;
-  mccomp_posr[22] = mcposrSample_Out;
-  mcNCounter[22]  = mcPCounter[22] = mcP2Counter[22] = 0;
-  mcAbsorbProp[22]= 0;
+  mccomp_posa[23] = mcposaSample_Out;
+  mccomp_posr[23] = mcposrSample_Out;
+  mcNCounter[23]  = mcPCounter[23] = mcP2Counter[23] = 0;
+  mcAbsorbProp[23]= 0;
     /* Component after_sample_slit. */
   /* Setting parameters for component after_sample_slit. */
   SIG_MESSAGE("after_sample_slit (Init:SetPar)");
@@ -12632,39 +12848,39 @@ void mcinit(void) {
   mccafter_sample_slit_ymax = 0;
 #line 46 "ThALES_resolution_v2.instr"
   mccafter_sample_slit_radius = 0;
-#line 306 "ThALES_resolution_v2.instr"
+#line 317 "ThALES_resolution_v2.instr"
   mccafter_sample_slit_xwidth = 0.03;
-#line 306 "ThALES_resolution_v2.instr"
+#line 317 "ThALES_resolution_v2.instr"
   mccafter_sample_slit_yheight = 0.04;
-#line 12639 "./ThALES_resolution_v2.c"
+#line 12855 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("after_sample_slit (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12646 "./ThALES_resolution_v2.c"
+#line 12862 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaSample_Out, mcrotaafter_sample_slit);
   rot_transpose(mcrotaSample_Out, mctr1);
   rot_mul(mcrotaafter_sample_slit, mctr1, mcrotrafter_sample_slit);
   mctc1 = coords_set(
-#line 307 "ThALES_resolution_v2.instr"
+#line 318 "ThALES_resolution_v2.instr"
     0,
-#line 307 "ThALES_resolution_v2.instr"
+#line 318 "ThALES_resolution_v2.instr"
     0,
-#line 307 "ThALES_resolution_v2.instr"
+#line 318 "ThALES_resolution_v2.instr"
     0.250);
-#line 12657 "./ThALES_resolution_v2.c"
+#line 12873 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaSample_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaafter_sample_slit = coords_add(mcposaSample_Out, mctc2);
   mctc1 = coords_sub(mcposaSample_Out, mcposaafter_sample_slit);
   mcposrafter_sample_slit = rot_apply(mcrotaafter_sample_slit, mctc1);
   mcDEBUG_COMPONENT("after_sample_slit", mcposaafter_sample_slit, mcrotaafter_sample_slit)
-  mccomp_posa[23] = mcposaafter_sample_slit;
-  mccomp_posr[23] = mcposrafter_sample_slit;
-  mcNCounter[23]  = mcPCounter[23] = mcP2Counter[23] = 0;
-  mcAbsorbProp[23]= 0;
+  mccomp_posa[24] = mcposaafter_sample_slit;
+  mccomp_posr[24] = mcposrafter_sample_slit;
+  mcNCounter[24]  = mcPCounter[24] = mcP2Counter[24] = 0;
+  mcAbsorbProp[24]= 0;
     /* Component Ana_Cradle. */
   /* Setting parameters for component Ana_Cradle. */
   SIG_MESSAGE("Ana_Cradle (Init:SetPar)");
@@ -12674,36 +12890,36 @@ void mcinit(void) {
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12677 "./ThALES_resolution_v2.c"
+#line 12893 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaSample_Out, mcrotaAna_Cradle);
   rot_transpose(mcrotaafter_sample_slit, mctr1);
   rot_mul(mcrotaAna_Cradle, mctr1, mcrotrAna_Cradle);
   mctc1 = coords_set(
-#line 310 "ThALES_resolution_v2.instr"
+#line 321 "ThALES_resolution_v2.instr"
     0,
-#line 310 "ThALES_resolution_v2.instr"
+#line 321 "ThALES_resolution_v2.instr"
     0,
-#line 310 "ThALES_resolution_v2.instr"
+#line 321 "ThALES_resolution_v2.instr"
     dist_sample_ana);
-#line 12688 "./ThALES_resolution_v2.c"
+#line 12904 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaSample_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaAna_Cradle = coords_add(mcposaSample_Out, mctc2);
   mctc1 = coords_sub(mcposaafter_sample_slit, mcposaAna_Cradle);
   mcposrAna_Cradle = rot_apply(mcrotaAna_Cradle, mctc1);
   mcDEBUG_COMPONENT("Ana_Cradle", mcposaAna_Cradle, mcrotaAna_Cradle)
-  mccomp_posa[24] = mcposaAna_Cradle;
-  mccomp_posr[24] = mcposrAna_Cradle;
-  mcNCounter[24]  = mcPCounter[24] = mcP2Counter[24] = 0;
-  mcAbsorbProp[24]= 0;
+  mccomp_posa[25] = mcposaAna_Cradle;
+  mccomp_posr[25] = mcposrAna_Cradle;
+  mcNCounter[25]  = mcPCounter[25] = mcP2Counter[25] = 0;
+  mcAbsorbProp[25]= 0;
     /* Component PSD_analyzer. */
   /* Setting parameters for component PSD_analyzer. */
   SIG_MESSAGE("PSD_analyzer (Init:SetPar)");
-#line 313 "ThALES_resolution_v2.instr"
+#line 324 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_nx = 200;
-#line 313 "ThALES_resolution_v2.instr"
+#line 324 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_ny = 200;
-#line 314 "ThALES_resolution_v2.instr"
+#line 325 "ThALES_resolution_v2.instr"
   if("PSD_ana.dat") strncpy(mccPSD_analyzer_filename, "PSD_ana.dat" ? "PSD_ana.dat" : "", 16384); else mccPSD_analyzer_filename[0]='\0';
 #line 51 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_xmin = -0.05;
@@ -12713,43 +12929,43 @@ void mcinit(void) {
   mccPSD_analyzer_ymin = -0.05;
 #line 51 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_ymax = 0.05;
-#line 314 "ThALES_resolution_v2.instr"
+#line 325 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_xwidth = 0.25;
-#line 314 "ThALES_resolution_v2.instr"
+#line 325 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_yheight = 0.25;
-#line 313 "ThALES_resolution_v2.instr"
+#line 324 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_restore_neutron = 1;
 #line 52 "ThALES_resolution_v2.instr"
   mccPSD_analyzer_nowritefile = 0;
-#line 12724 "./ThALES_resolution_v2.c"
+#line 12940 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("PSD_analyzer (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12731 "./ThALES_resolution_v2.c"
+#line 12947 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaAna_Cradle, mcrotaPSD_analyzer);
   rot_transpose(mcrotaAna_Cradle, mctr1);
   rot_mul(mcrotaPSD_analyzer, mctr1, mcrotrPSD_analyzer);
   mctc1 = coords_set(
-#line 315 "ThALES_resolution_v2.instr"
+#line 326 "ThALES_resolution_v2.instr"
     0,
-#line 315 "ThALES_resolution_v2.instr"
+#line 326 "ThALES_resolution_v2.instr"
     0,
-#line 315 "ThALES_resolution_v2.instr"
+#line 326 "ThALES_resolution_v2.instr"
     0);
-#line 12742 "./ThALES_resolution_v2.c"
+#line 12958 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaAna_Cradle, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaPSD_analyzer = coords_add(mcposaAna_Cradle, mctc2);
   mctc1 = coords_sub(mcposaAna_Cradle, mcposaPSD_analyzer);
   mcposrPSD_analyzer = rot_apply(mcrotaPSD_analyzer, mctc1);
   mcDEBUG_COMPONENT("PSD_analyzer", mcposaPSD_analyzer, mcrotaPSD_analyzer)
-  mccomp_posa[25] = mcposaPSD_analyzer;
-  mccomp_posr[25] = mcposrPSD_analyzer;
-  mcNCounter[25]  = mcPCounter[25] = mcP2Counter[25] = 0;
-  mcAbsorbProp[25]= 0;
+  mccomp_posa[26] = mcposaPSD_analyzer;
+  mccomp_posr[26] = mcposrPSD_analyzer;
+  mcNCounter[26]  = mcPCounter[26] = mcP2Counter[26] = 0;
+  mcAbsorbProp[26]= 0;
     /* Component analyzer. */
   /* Setting parameters for component analyzer. */
   SIG_MESSAGE("analyzer (Init:SetPar)");
@@ -12761,104 +12977,104 @@ void mcinit(void) {
   mccanalyzer_zwidth = 0.01;
 #line 100 "ThALES_resolution_v2.instr"
   mccanalyzer_yheight = 0.01;
-#line 319 "ThALES_resolution_v2.instr"
+#line 330 "ThALES_resolution_v2.instr"
   mccanalyzer_gap = 0.0005;
-#line 319 "ThALES_resolution_v2.instr"
+#line 330 "ThALES_resolution_v2.instr"
   mccanalyzer_NH = 11;
-#line 319 "ThALES_resolution_v2.instr"
+#line 330 "ThALES_resolution_v2.instr"
   mccanalyzer_NV = 9;
-#line 320 "ThALES_resolution_v2.instr"
+#line 331 "ThALES_resolution_v2.instr"
   mccanalyzer_mosaich = 30;
-#line 320 "ThALES_resolution_v2.instr"
+#line 331 "ThALES_resolution_v2.instr"
   mccanalyzer_mosaicv = 30;
-#line 320 "ThALES_resolution_v2.instr"
+#line 331 "ThALES_resolution_v2.instr"
   mccanalyzer_r0 = 0.7;
 #line 101 "ThALES_resolution_v2.instr"
   mccanalyzer_t0 = 1.0;
 #line 101 "ThALES_resolution_v2.instr"
   mccanalyzer_Q = 1.8734;
-#line 319 "ThALES_resolution_v2.instr"
+#line 330 "ThALES_resolution_v2.instr"
   mccanalyzer_RV = ana_RMV;
-#line 319 "ThALES_resolution_v2.instr"
+#line 330 "ThALES_resolution_v2.instr"
   mccanalyzer_RH = ana_RMH;
-#line 320 "ThALES_resolution_v2.instr"
+#line 331 "ThALES_resolution_v2.instr"
   mccanalyzer_DM = 3.355;
 #line 102 "ThALES_resolution_v2.instr"
   mccanalyzer_mosaic = 0;
-#line 318 "ThALES_resolution_v2.instr"
+#line 329 "ThALES_resolution_v2.instr"
   mccanalyzer_width = 0.17;
-#line 318 "ThALES_resolution_v2.instr"
+#line 329 "ThALES_resolution_v2.instr"
   mccanalyzer_height = 0.13;
 #line 102 "ThALES_resolution_v2.instr"
   mccanalyzer_verbose = 0;
 #line 102 "ThALES_resolution_v2.instr"
   mccanalyzer_order = 0;
-#line 12796 "./ThALES_resolution_v2.c"
+#line 13012 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("analyzer (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-#line 322 "ThALES_resolution_v2.instr"
+#line 333 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD,
-#line 322 "ThALES_resolution_v2.instr"
+#line 333 "ThALES_resolution_v2.instr"
     (- A5)*DEG2RAD,
-#line 322 "ThALES_resolution_v2.instr"
+#line 333 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD);
-#line 12806 "./ThALES_resolution_v2.c"
+#line 13022 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaAna_Cradle, mcrotaanalyzer);
   rot_transpose(mcrotaPSD_analyzer, mctr1);
   rot_mul(mcrotaanalyzer, mctr1, mcrotranalyzer);
   mctc1 = coords_set(
-#line 321 "ThALES_resolution_v2.instr"
+#line 332 "ThALES_resolution_v2.instr"
     0,
-#line 321 "ThALES_resolution_v2.instr"
+#line 332 "ThALES_resolution_v2.instr"
     0,
-#line 321 "ThALES_resolution_v2.instr"
+#line 332 "ThALES_resolution_v2.instr"
     0);
-#line 12817 "./ThALES_resolution_v2.c"
+#line 13033 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaAna_Cradle, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaanalyzer = coords_add(mcposaAna_Cradle, mctc2);
   mctc1 = coords_sub(mcposaPSD_analyzer, mcposaanalyzer);
   mcposranalyzer = rot_apply(mcrotaanalyzer, mctc1);
   mcDEBUG_COMPONENT("analyzer", mcposaanalyzer, mcrotaanalyzer)
-  mccomp_posa[26] = mcposaanalyzer;
-  mccomp_posr[26] = mcposranalyzer;
-  mcNCounter[26]  = mcPCounter[26] = mcP2Counter[26] = 0;
-  mcAbsorbProp[26]= 0;
+  mccomp_posa[27] = mcposaanalyzer;
+  mccomp_posr[27] = mcposranalyzer;
+  mcNCounter[27]  = mcPCounter[27] = mcP2Counter[27] = 0;
+  mcAbsorbProp[27]= 0;
     /* Component Ana_Out. */
   /* Setting parameters for component Ana_Out. */
   SIG_MESSAGE("Ana_Out (Init:SetPar)");
 
   SIG_MESSAGE("Ana_Out (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-#line 326 "ThALES_resolution_v2.instr"
+#line 337 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD,
-#line 326 "ThALES_resolution_v2.instr"
+#line 337 "ThALES_resolution_v2.instr"
     (- A6)*DEG2RAD,
-#line 326 "ThALES_resolution_v2.instr"
+#line 337 "ThALES_resolution_v2.instr"
     (0)*DEG2RAD);
-#line 12840 "./ThALES_resolution_v2.c"
+#line 13056 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaAna_Cradle, mcrotaAna_Out);
   rot_transpose(mcrotaanalyzer, mctr1);
   rot_mul(mcrotaAna_Out, mctr1, mcrotrAna_Out);
   mctc1 = coords_set(
-#line 325 "ThALES_resolution_v2.instr"
+#line 336 "ThALES_resolution_v2.instr"
     0,
-#line 325 "ThALES_resolution_v2.instr"
+#line 336 "ThALES_resolution_v2.instr"
     0,
-#line 325 "ThALES_resolution_v2.instr"
+#line 336 "ThALES_resolution_v2.instr"
     0);
-#line 12851 "./ThALES_resolution_v2.c"
+#line 13067 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaAna_Cradle, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaAna_Out = coords_add(mcposaAna_Cradle, mctc2);
   mctc1 = coords_sub(mcposaanalyzer, mcposaAna_Out);
   mcposrAna_Out = rot_apply(mcrotaAna_Out, mctc1);
   mcDEBUG_COMPONENT("Ana_Out", mcposaAna_Out, mcrotaAna_Out)
-  mccomp_posa[27] = mcposaAna_Out;
-  mccomp_posr[27] = mcposrAna_Out;
-  mcNCounter[27]  = mcPCounter[27] = mcP2Counter[27] = 0;
-  mcAbsorbProp[27]= 0;
+  mccomp_posa[28] = mcposaAna_Out;
+  mccomp_posr[28] = mcposrAna_Out;
+  mcNCounter[28]  = mcPCounter[28] = mcP2Counter[28] = 0;
+  mcAbsorbProp[28]= 0;
     /* Component slit. */
   /* Setting parameters for component slit. */
   SIG_MESSAGE("slit (Init:SetPar)");
@@ -12872,47 +13088,47 @@ void mcinit(void) {
   mccslit_ymax = 0;
 #line 46 "ThALES_resolution_v2.instr"
   mccslit_radius = 0;
-#line 329 "ThALES_resolution_v2.instr"
+#line 340 "ThALES_resolution_v2.instr"
   mccslit_xwidth = 0.03;
-#line 330 "ThALES_resolution_v2.instr"
+#line 341 "ThALES_resolution_v2.instr"
   mccslit_yheight = 0.08;
-#line 12879 "./ThALES_resolution_v2.c"
+#line 13095 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("slit (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12886 "./ThALES_resolution_v2.c"
+#line 13102 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaAna_Out, mcrotaslit);
   rot_transpose(mcrotaAna_Out, mctr1);
   rot_mul(mcrotaslit, mctr1, mcrotrslit);
   mctc1 = coords_set(
-#line 331 "ThALES_resolution_v2.instr"
+#line 342 "ThALES_resolution_v2.instr"
     0,
-#line 331 "ThALES_resolution_v2.instr"
+#line 342 "ThALES_resolution_v2.instr"
     0,
-#line 331 "ThALES_resolution_v2.instr"
+#line 342 "ThALES_resolution_v2.instr"
     0.340);
-#line 12897 "./ThALES_resolution_v2.c"
+#line 13113 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaAna_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaslit = coords_add(mcposaAna_Out, mctc2);
   mctc1 = coords_sub(mcposaAna_Out, mcposaslit);
   mcposrslit = rot_apply(mcrotaslit, mctc1);
   mcDEBUG_COMPONENT("slit", mcposaslit, mcrotaslit)
-  mccomp_posa[28] = mcposaslit;
-  mccomp_posr[28] = mcposrslit;
-  mcNCounter[28]  = mcPCounter[28] = mcP2Counter[28] = 0;
-  mcAbsorbProp[28]= 0;
+  mccomp_posa[29] = mcposaslit;
+  mccomp_posr[29] = mcposrslit;
+  mcNCounter[29]  = mcPCounter[29] = mcP2Counter[29] = 0;
+  mcAbsorbProp[29]= 0;
     /* Component PSD_det. */
   /* Setting parameters for component PSD_det. */
   SIG_MESSAGE("PSD_det (Init:SetPar)");
-#line 337 "ThALES_resolution_v2.instr"
+#line 348 "ThALES_resolution_v2.instr"
   mccPSD_det_nx = 200;
-#line 337 "ThALES_resolution_v2.instr"
+#line 348 "ThALES_resolution_v2.instr"
   mccPSD_det_ny = 200;
-#line 338 "ThALES_resolution_v2.instr"
+#line 349 "ThALES_resolution_v2.instr"
   if("PSD_det.dat") strncpy(mccPSD_det_filename, "PSD_det.dat" ? "PSD_det.dat" : "", 16384); else mccPSD_det_filename[0]='\0';
 #line 51 "ThALES_resolution_v2.instr"
   mccPSD_det_xmin = -0.05;
@@ -12922,53 +13138,53 @@ void mcinit(void) {
   mccPSD_det_ymin = -0.05;
 #line 51 "ThALES_resolution_v2.instr"
   mccPSD_det_ymax = 0.05;
-#line 338 "ThALES_resolution_v2.instr"
+#line 349 "ThALES_resolution_v2.instr"
   mccPSD_det_xwidth = 0.2;
-#line 338 "ThALES_resolution_v2.instr"
+#line 349 "ThALES_resolution_v2.instr"
   mccPSD_det_yheight = 0.2;
-#line 337 "ThALES_resolution_v2.instr"
+#line 348 "ThALES_resolution_v2.instr"
   mccPSD_det_restore_neutron = 1;
 #line 52 "ThALES_resolution_v2.instr"
   mccPSD_det_nowritefile = 0;
-#line 12933 "./ThALES_resolution_v2.c"
+#line 13149 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("PSD_det (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 12940 "./ThALES_resolution_v2.c"
+#line 13156 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaAna_Out, mcrotaPSD_det);
   rot_transpose(mcrotaslit, mctr1);
   rot_mul(mcrotaPSD_det, mctr1, mcrotrPSD_det);
   mctc1 = coords_set(
-#line 339 "ThALES_resolution_v2.instr"
+#line 350 "ThALES_resolution_v2.instr"
     0,
-#line 339 "ThALES_resolution_v2.instr"
+#line 350 "ThALES_resolution_v2.instr"
     0,
-#line 339 "ThALES_resolution_v2.instr"
+#line 350 "ThALES_resolution_v2.instr"
     dist_ana_det -0.0001);
-#line 12951 "./ThALES_resolution_v2.c"
+#line 13167 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaAna_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaPSD_det = coords_add(mcposaAna_Out, mctc2);
   mctc1 = coords_sub(mcposaslit, mcposaPSD_det);
   mcposrPSD_det = rot_apply(mcrotaPSD_det, mctc1);
   mcDEBUG_COMPONENT("PSD_det", mcposaPSD_det, mcrotaPSD_det)
-  mccomp_posa[29] = mcposaPSD_det;
-  mccomp_posr[29] = mcposrPSD_det;
-  mcNCounter[29]  = mcPCounter[29] = mcP2Counter[29] = 0;
-  mcAbsorbProp[29]= 0;
+  mccomp_posa[30] = mcposaPSD_det;
+  mccomp_posr[30] = mcposrPSD_det;
+  mcNCounter[30]  = mcPCounter[30] = mcP2Counter[30] = 0;
+  mcAbsorbProp[30]= 0;
     /* Component res_monitor. */
   /* Setting parameters for component res_monitor. */
   SIG_MESSAGE("res_monitor (Init:SetPar)");
-#line 343 "ThALES_resolution_v2.instr"
+#line 354 "ThALES_resolution_v2.instr"
   if("res_monitor") strncpy(mccres_monitor_filename, "res_monitor" ? "res_monitor" : "", 16384); else mccres_monitor_filename[0]='\0';
 #line 69 "ThALES_resolution_v2.instr"
   if(0) strncpy(mccres_monitor_options, 0 ? 0 : "", 16384); else mccres_monitor_options[0]='\0';
-#line 344 "ThALES_resolution_v2.instr"
+#line 355 "ThALES_resolution_v2.instr"
   mccres_monitor_xwidth = 0.05;
-#line 345 "ThALES_resolution_v2.instr"
+#line 356 "ThALES_resolution_v2.instr"
   mccres_monitor_yheight = 0.12;
 #line 69 "ThALES_resolution_v2.instr"
   mccres_monitor_zdepth = 0;
@@ -12990,35 +13206,35 @@ void mcinit(void) {
   mccres_monitor_bufsize = 0;
 #line 70 "ThALES_resolution_v2.instr"
   mccres_monitor_restore_neutron = 0;
-#line 12993 "./ThALES_resolution_v2.c"
+#line 13209 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("res_monitor (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 13000 "./ThALES_resolution_v2.c"
+#line 13216 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaAna_Out, mcrotares_monitor);
   rot_transpose(mcrotaPSD_det, mctr1);
   rot_mul(mcrotares_monitor, mctr1, mcrotrres_monitor);
   mctc1 = coords_set(
-#line 346 "ThALES_resolution_v2.instr"
+#line 357 "ThALES_resolution_v2.instr"
     0,
-#line 346 "ThALES_resolution_v2.instr"
+#line 357 "ThALES_resolution_v2.instr"
     0,
-#line 346 "ThALES_resolution_v2.instr"
+#line 357 "ThALES_resolution_v2.instr"
     dist_ana_det);
-#line 13011 "./ThALES_resolution_v2.c"
+#line 13227 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaAna_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposares_monitor = coords_add(mcposaAna_Out, mctc2);
   mctc1 = coords_sub(mcposaPSD_det, mcposares_monitor);
   mcposrres_monitor = rot_apply(mcrotares_monitor, mctc1);
   mcDEBUG_COMPONENT("res_monitor", mcposares_monitor, mcrotares_monitor)
-  mccomp_posa[30] = mcposares_monitor;
-  mccomp_posr[30] = mcposrres_monitor;
-  mcNCounter[30]  = mcPCounter[30] = mcP2Counter[30] = 0;
-  mcAbsorbProp[30]= 0;
+  mccomp_posa[31] = mcposares_monitor;
+  mccomp_posr[31] = mcposrres_monitor;
+  mcNCounter[31]  = mcPCounter[31] = mcP2Counter[31] = 0;
+  mcAbsorbProp[31]= 0;
     /* Component detector_all. */
   /* Setting parameters for component detector_all. */
   SIG_MESSAGE("detector_all (Init:SetPar)");
@@ -13030,41 +13246,41 @@ void mcinit(void) {
   mccdetector_all_ymin = -0.05;
 #line 45 "ThALES_resolution_v2.instr"
   mccdetector_all_ymax = 0.05;
-#line 349 "ThALES_resolution_v2.instr"
+#line 360 "ThALES_resolution_v2.instr"
   mccdetector_all_xwidth = 0.05;
-#line 350 "ThALES_resolution_v2.instr"
+#line 361 "ThALES_resolution_v2.instr"
   mccdetector_all_yheight = 0.12;
 #line 46 "ThALES_resolution_v2.instr"
   mccdetector_all_restore_neutron = 0;
-#line 13039 "./ThALES_resolution_v2.c"
+#line 13255 "./ThALES_resolution_v2.c"
 
   SIG_MESSAGE("detector_all (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 13046 "./ThALES_resolution_v2.c"
+#line 13262 "./ThALES_resolution_v2.c"
   rot_mul(mctr1, mcrotaAna_Out, mcrotadetector_all);
   rot_transpose(mcrotares_monitor, mctr1);
   rot_mul(mcrotadetector_all, mctr1, mcrotrdetector_all);
   mctc1 = coords_set(
-#line 351 "ThALES_resolution_v2.instr"
+#line 362 "ThALES_resolution_v2.instr"
     0,
-#line 351 "ThALES_resolution_v2.instr"
+#line 362 "ThALES_resolution_v2.instr"
     0,
-#line 351 "ThALES_resolution_v2.instr"
+#line 362 "ThALES_resolution_v2.instr"
     dist_ana_det + 0.001);
-#line 13057 "./ThALES_resolution_v2.c"
+#line 13273 "./ThALES_resolution_v2.c"
   rot_transpose(mcrotaAna_Out, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposadetector_all = coords_add(mcposaAna_Out, mctc2);
   mctc1 = coords_sub(mcposares_monitor, mcposadetector_all);
   mcposrdetector_all = rot_apply(mcrotadetector_all, mctc1);
   mcDEBUG_COMPONENT("detector_all", mcposadetector_all, mcrotadetector_all)
-  mccomp_posa[31] = mcposadetector_all;
-  mccomp_posr[31] = mcposrdetector_all;
-  mcNCounter[31]  = mcPCounter[31] = mcP2Counter[31] = 0;
-  mcAbsorbProp[31]= 0;
+  mccomp_posa[32] = mcposadetector_all;
+  mccomp_posr[32] = mcposrdetector_all;
+  mcNCounter[32]  = mcPCounter[32] = mcP2Counter[32] = 0;
+  mcAbsorbProp[32]= 0;
   /* Component initializations. */
   /* Initializations for component Origin. */
   SIG_MESSAGE("Origin (Init)");
@@ -13091,7 +13307,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
     percent=1e5*100.0/mcget_ncount();
   }
 }
-#line 13094 "./ThALES_resolution_v2.c"
+#line 13310 "./ThALES_resolution_v2.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -13428,7 +13644,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
       printf("Source_gen: component %s unactivated", NAME_CURRENT_COMP);
   );
 }
-#line 13431 "./ThALES_resolution_v2.c"
+#line 13647 "./ThALES_resolution_v2.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -13576,7 +13792,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
   } else printf("Guide_gravity: %s: unactivated (l=0 or nelements=0)\n", NAME_CURRENT_COMP);
 
 }
-#line 13579 "./ThALES_resolution_v2.c"
+#line 13795 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -13716,7 +13932,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
   } else printf("Guide_gravity: %s: unactivated (l=0 or nelements=0)\n", NAME_CURRENT_COMP);
 
 }
-#line 13719 "./ThALES_resolution_v2.c"
+#line 13935 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -13850,7 +14066,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
   } else printf("Guide_gravity: %s: unactivated (l=0 or nelements=0)\n", NAME_CURRENT_COMP);
 
 }
-#line 13853 "./ThALES_resolution_v2.c"
+#line 14069 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -13987,7 +14203,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
   } else printf("Guide_gravity: %s: unactivated (l=0 or nelements=0)\n", NAME_CURRENT_COMP);
 
 }
-#line 13990 "./ThALES_resolution_v2.c"
+#line 14206 "./ThALES_resolution_v2.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -14427,7 +14643,7 @@ w1c = (double*)malloc(sizeof(double)*segno);
   if (curvature && l && segno)   rotation_h = l/curvature/segno;
   if (curvature_v && l && segno) rotation_v = l/curvature_v/segno;
 }
-#line 14430 "./ThALES_resolution_v2.c"
+#line 14646 "./ThALES_resolution_v2.c"
 #undef curvature_v
 #undef curvature
 #undef segno
@@ -14522,7 +14738,7 @@ if (xwidth > 0)  {
     { fprintf(stderr,"Slit: %s: Warning: Running with CLOSED slit - is this intentional?? \n", NAME_CURRENT_COMP); }
 
 }
-#line 14525 "./ThALES_resolution_v2.c"
+#line 14741 "./ThALES_resolution_v2.c"
 #undef yheight
 #undef xwidth
 #undef radius
@@ -14575,7 +14791,7 @@ if (xwidth  > 0) { xmax = xwidth/2;  xmin = -xmax; }
       L_p2[i] = 0;
     }
 }
-#line 14578 "./ThALES_resolution_v2.c"
+#line 14794 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef Lmax
@@ -14716,7 +14932,7 @@ if (xwidth  > 0) { xmax = xwidth/2;  xmin = -xmax; }
   }
 
 }
-#line 14719 "./ThALES_resolution_v2.c"
+#line 14935 "./ThALES_resolution_v2.c"
 #undef order
 #undef verbose
 #undef height
@@ -14788,7 +15004,7 @@ if (xwidth > 0)  {
     { fprintf(stderr,"Slit: %s: Warning: Running with CLOSED slit - is this intentional?? \n", NAME_CURRENT_COMP); }
 
 }
-#line 14791 "./ThALES_resolution_v2.c"
+#line 15007 "./ThALES_resolution_v2.c"
 #undef yheight
 #undef xwidth
 #undef radius
@@ -14845,7 +15061,7 @@ if (xwidth  > 0) { xmax = xwidth/2;  xmin = -xmax; }
     }
     S_p = S_pE = S_pE2 = 0;
 }
-#line 14848 "./ThALES_resolution_v2.c"
+#line 15064 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef Emax
@@ -14912,7 +15128,7 @@ if (xwidth  > 0) { xmax = xwidth/2;  xmin = -xmax; }
     }
   }
 }
-#line 14915 "./ThALES_resolution_v2.c"
+#line 15131 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef yheight
@@ -14996,7 +15212,7 @@ if (!radius || !yheight) {
     res_struct.ah = DEG2RAD*focus_ah;
   }
 }
-#line 14999 "./ThALES_resolution_v2.c"
+#line 15215 "./ThALES_resolution_v2.c"
 #undef target_index
 #undef zdepth
 #undef yheight
@@ -15018,6 +15234,136 @@ if (!radius || !yheight) {
 #undef mccompcurtype
 #undef mccompcurindex
 
+  /* Initializations for component v_sample. */
+  SIG_MESSAGE("v_sample (Init)");
+#define mccompcurname  v_sample
+#define mccompcurtype  V_sample
+#define mccompcurindex 22
+#define VarsV mccv_sample_VarsV
+#define radius mccv_sample_radius
+#define thickness mccv_sample_thickness
+#define zdepth mccv_sample_zdepth
+#define Vc mccv_sample_Vc
+#define sigma_abs mccv_sample_sigma_abs
+#define sigma_inc mccv_sample_sigma_inc
+#define radius_i mccv_sample_radius_i
+#define radius_o mccv_sample_radius_o
+#define h mccv_sample_h
+#define focus_r mccv_sample_focus_r
+#define pack mccv_sample_pack
+#define frac mccv_sample_frac
+#define f_QE mccv_sample_f_QE
+#define gamma mccv_sample_gamma
+#define target_x mccv_sample_target_x
+#define target_y mccv_sample_target_y
+#define target_z mccv_sample_target_z
+#define focus_xw mccv_sample_focus_xw
+#define focus_yh mccv_sample_focus_yh
+#define focus_aw mccv_sample_focus_aw
+#define focus_ah mccv_sample_focus_ah
+#define xwidth mccv_sample_xwidth
+#define yheight mccv_sample_yheight
+#define zthick mccv_sample_zthick
+#define rad_sphere mccv_sample_rad_sphere
+#define sig_a mccv_sample_sig_a
+#define sig_i mccv_sample_sig_i
+#define V0 mccv_sample_V0
+#define target_index mccv_sample_target_index
+#define multiples mccv_sample_multiples
+#line 121 "V_sample.comp"
+{
+  /* Backward compatibility */
+  if (radius) radius_o = radius;
+  if (thickness) radius_i = radius_o - thickness;
+  if (zdepth) zthick = zdepth;
+  if (yheight) h = yheight;
+  if (Vc) V0 = Vc;
+  if (sigma_abs) sig_a = sigma_abs;
+  if (sigma_inc) sig_i = sigma_inc;
+
+  VarsV.shapetyp = -1;
+  if (xwidth && yheight && zdepth)  VarsV.shapetyp=1; /* box */
+  else if (radius > 0 && yheight)        VarsV.shapetyp=0; /* cylinder */
+  else if (radius && !yheight)           VarsV.shapetyp=2; /* sphere */
+  
+  if (VarsV.shapetyp < 0)
+    exit(fprintf(stderr,"V_sample: %s: sample has invalid dimensions. Please check parameter values.\n", NAME_CURRENT_COMP));
+
+  VarsV.sigma_a=sig_a;
+  VarsV.sigma_i=sig_i;
+  VarsV.rho = (pack/V0);
+  VarsV.my_s=(VarsV.rho * 100 * VarsV.sigma_i);
+  VarsV.my_a_v=(VarsV.rho * 100 * VarsV.sigma_a);
+
+  /* now compute target coords if a component index is supplied */
+  VarsV.tx= VarsV.ty=VarsV.tz=0;
+  if (target_index)
+  {
+    Coords ToTarget;
+    ToTarget = coords_sub(POS_A_COMP_INDEX(INDEX_CURRENT_COMP+target_index),POS_A_CURRENT_COMP);
+    ToTarget = rot_apply(ROT_A_CURRENT_COMP, ToTarget);
+    coords_get(ToTarget, &VarsV.tx, &VarsV.ty, &VarsV.tz);
+  }
+  else
+  { VarsV.tx = target_x; VarsV.ty = target_y; VarsV.tz = target_z; }
+
+  if (!(VarsV.tx || VarsV.ty || VarsV.tz))
+    printf("V_sample: %s: The target is not defined. Using direct beam (Z-axis).\n",
+      NAME_CURRENT_COMP);
+
+  VarsV.distance=sqrt(VarsV.tx*VarsV.tx+VarsV.ty*VarsV.ty+VarsV.tz*VarsV.tz);
+
+  /* different ways of setting rectangular area */
+  VarsV.aw  = VarsV.ah = 0;
+  if (focus_xw) {
+  VarsV.xw = focus_xw;
+  }
+  if (focus_yh) {
+    VarsV.yh = focus_yh;
+  }
+  if (focus_aw) {
+    VarsV.aw = DEG2RAD*focus_aw;
+  }
+  if (focus_ah) {
+    VarsV.ah = DEG2RAD*focus_ah;
+  }
+}
+#line 15331 "./ThALES_resolution_v2.c"
+#undef multiples
+#undef target_index
+#undef V0
+#undef sig_i
+#undef sig_a
+#undef rad_sphere
+#undef zthick
+#undef yheight
+#undef xwidth
+#undef focus_ah
+#undef focus_aw
+#undef focus_yh
+#undef focus_xw
+#undef target_z
+#undef target_y
+#undef target_x
+#undef gamma
+#undef f_QE
+#undef frac
+#undef pack
+#undef focus_r
+#undef h
+#undef radius_o
+#undef radius_i
+#undef sigma_inc
+#undef sigma_abs
+#undef Vc
+#undef zdepth
+#undef thickness
+#undef radius
+#undef VarsV
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
   /* Initializations for component Sample_Out. */
   SIG_MESSAGE("Sample_Out (Init)");
 
@@ -15025,7 +15371,7 @@ if (!radius || !yheight) {
   SIG_MESSAGE("after_sample_slit (Init)");
 #define mccompcurname  after_sample_slit
 #define mccompcurtype  Slit
-#define mccompcurindex 23
+#define mccompcurindex 24
 #define xmin mccafter_sample_slit_xmin
 #define xmax mccafter_sample_slit_xmax
 #define ymin mccafter_sample_slit_ymin
@@ -15053,7 +15399,7 @@ if (xwidth > 0)  {
     { fprintf(stderr,"Slit: %s: Warning: Running with CLOSED slit - is this intentional?? \n", NAME_CURRENT_COMP); }
 
 }
-#line 15056 "./ThALES_resolution_v2.c"
+#line 15402 "./ThALES_resolution_v2.c"
 #undef yheight
 #undef xwidth
 #undef radius
@@ -15072,7 +15418,7 @@ if (xwidth > 0)  {
   SIG_MESSAGE("PSD_analyzer (Init)");
 #define mccompcurname  PSD_analyzer
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 25
+#define mccompcurindex 26
 #define PSD_N mccPSD_analyzer_PSD_N
 #define PSD_p mccPSD_analyzer_PSD_p
 #define PSD_p2 mccPSD_analyzer_PSD_p2
@@ -15112,7 +15458,7 @@ if (xwidth > 0)  {
     }
   }
 }
-#line 15115 "./ThALES_resolution_v2.c"
+#line 15461 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef yheight
@@ -15135,7 +15481,7 @@ if (xwidth > 0)  {
   SIG_MESSAGE("analyzer (Init)");
 #define mccompcurname  analyzer
 #define mccompcurtype  Monochromator_curved
-#define mccompcurindex 26
+#define mccompcurindex 27
 #define mos_rms_y mccanalyzer_mos_rms_y
 #define mos_rms_z mccanalyzer_mos_rms_z
 #define mos_rms_max mccanalyzer_mos_rms_max
@@ -15249,7 +15595,7 @@ if (xwidth > 0)  {
   }
 
 }
-#line 15252 "./ThALES_resolution_v2.c"
+#line 15598 "./ThALES_resolution_v2.c"
 #undef order
 #undef verbose
 #undef height
@@ -15293,7 +15639,7 @@ if (xwidth > 0)  {
   SIG_MESSAGE("slit (Init)");
 #define mccompcurname  slit
 #define mccompcurtype  Slit
-#define mccompcurindex 28
+#define mccompcurindex 29
 #define xmin mccslit_xmin
 #define xmax mccslit_xmax
 #define ymin mccslit_ymin
@@ -15321,7 +15667,7 @@ if (xwidth > 0)  {
     { fprintf(stderr,"Slit: %s: Warning: Running with CLOSED slit - is this intentional?? \n", NAME_CURRENT_COMP); }
 
 }
-#line 15324 "./ThALES_resolution_v2.c"
+#line 15670 "./ThALES_resolution_v2.c"
 #undef yheight
 #undef xwidth
 #undef radius
@@ -15337,7 +15683,7 @@ if (xwidth > 0)  {
   SIG_MESSAGE("PSD_det (Init)");
 #define mccompcurname  PSD_det
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 29
+#define mccompcurindex 30
 #define PSD_N mccPSD_det_PSD_N
 #define PSD_p mccPSD_det_PSD_p
 #define PSD_p2 mccPSD_det_PSD_p2
@@ -15377,7 +15723,7 @@ if (xwidth > 0)  {
     }
   }
 }
-#line 15380 "./ThALES_resolution_v2.c"
+#line 15726 "./ThALES_resolution_v2.c"
 #undef nowritefile
 #undef restore_neutron
 #undef yheight
@@ -15400,7 +15746,7 @@ if (xwidth > 0)  {
   SIG_MESSAGE("res_monitor (Init)");
 #define mccompcurname  res_monitor
 #define mccompcurtype  Res_monitor
-#define mccompcurindex 30
+#define mccompcurindex 31
 #define res_sample_comp mccres_monitor_res_sample_comp
 #define DEFS mccres_monitor_DEFS
 #define Vars mccres_monitor_Vars
@@ -15461,7 +15807,7 @@ strcpy(Vars.compcurname, NAME_CURRENT_COMP);
   if (filename != NULL)
     strncpy(Vars.Mon_File, filename, 128);
 }
-#line 15464 "./ThALES_resolution_v2.c"
+#line 15810 "./ThALES_resolution_v2.c"
 #undef restore_neutron
 #undef bufsize
 #undef zmax
@@ -15488,7 +15834,7 @@ strcpy(Vars.compcurname, NAME_CURRENT_COMP);
   SIG_MESSAGE("detector_all (Init)");
 #define mccompcurname  detector_all
 #define mccompcurtype  Monitor
-#define mccompcurindex 31
+#define mccompcurindex 32
 #define Nsum mccdetector_all_Nsum
 #define psum mccdetector_all_psum
 #define p2sum mccdetector_all_p2sum
@@ -15515,7 +15861,7 @@ if (xwidth  > 0) { xmax = xwidth/2;  xmin = -xmax; }
       exit(-1);
     }
 }
-#line 15518 "./ThALES_resolution_v2.c"
+#line 15864 "./ThALES_resolution_v2.c"
 #undef restore_neutron
 #undef yheight
 #undef xwidth
@@ -15683,7 +16029,7 @@ MCNUM minutes = mccOrigin_minutes;
     if (flag_save) mcsave(NULL);
   }
 }
-#line 15686 "./ThALES_resolution_v2.c"
+#line 16032 "./ThALES_resolution_v2.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -15931,7 +16277,7 @@ int target_index = mccHCS_target_index;
     SCATTER;
   }
 }
-#line 15934 "./ThALES_resolution_v2.c"
+#line 16280 "./ThALES_resolution_v2.c"
 }   /* End of HCS=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -16362,7 +16708,7 @@ char* reflect = mccH5_rect_reflect;
 
   } /* if l */
 }
-#line 16365 "./ThALES_resolution_v2.c"
+#line 16711 "./ThALES_resolution_v2.c"
 }   /* End of H5_rect=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -16881,7 +17227,7 @@ char* reflect = mccH53_inpile_reflect;
 
   } /* if l */
 }
-#line 16884 "./ThALES_resolution_v2.c"
+#line 17230 "./ThALES_resolution_v2.c"
 }   /* End of H53_inpile=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -17194,7 +17540,7 @@ char* reflect = mccH53_Obt_reflect;
 
   } /* if l */
 }
-#line 17197 "./ThALES_resolution_v2.c"
+#line 17543 "./ThALES_resolution_v2.c"
 }   /* End of H53_Obt=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -17610,7 +17956,7 @@ char* reflect = mccH53_VSComC1_reflect;
 
   } /* if l */
 }
-#line 17613 "./ThALES_resolution_v2.c"
+#line 17959 "./ThALES_resolution_v2.c"
 }   /* End of H53_VSComC1=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -17931,7 +18277,7 @@ MCNUM curvature_v = mccH53_Nose_curvature_v;
   } /* loop on segments */
 
 }
-#line 17934 "./ThALES_resolution_v2.c"
+#line 18280 "./ThALES_resolution_v2.c"
 }   /* End of H53_Nose=Guide_tapering() SETTING parameter declarations. */
 #undef rotation_v
 #undef rotation_h
@@ -18094,7 +18440,7 @@ MCNUM yheight = mccbefore_monochromator_slit_yheight;
     else
         SCATTER;
 }
-#line 18097 "./ThALES_resolution_v2.c"
+#line 18443 "./ThALES_resolution_v2.c"
 }   /* End of before_monochromator_slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -18237,7 +18583,7 @@ int nowritefile = mccl_monitor_nowritefile;
       RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
     }
 }
-#line 18240 "./ThALES_resolution_v2.c"
+#line 18586 "./ThALES_resolution_v2.c"
 }   /* End of l_monitor=L_monitor() SETTING parameter declarations. */
 #undef L_p2
 #undef L_p
@@ -18711,12 +19057,12 @@ MCNUM order = mccH53_ThALES_Monochromator_order;
     }
   } /* End neutron moving towards crystal (if vx)*/
 }
-#line 18714 "./ThALES_resolution_v2.c"
+#line 19060 "./ThALES_resolution_v2.c"
 /* 'H53_ThALES_Monochromator=Monochromator_curved()' component instance extend code */
     SIG_MESSAGE("H53_ThALES_Monochromator (Trace:Extend)");
-#line 258 "ThALES_resolution_v2.instr"
+#line 259 "ThALES_resolution_v2.instr"
   flag=SCATTERED;
-#line 18719 "./ThALES_resolution_v2.c"
+#line 19065 "./ThALES_resolution_v2.c"
 }   /* End of H53_ThALES_Monochromator=Monochromator_curved() SETTING parameter declarations. */
 #undef tiltV
 #undef tiltH
@@ -18955,7 +19301,7 @@ MCNUM yheight = mccbefore_sample_slit_yheight;
     else
         SCATTER;
 }
-#line 18958 "./ThALES_resolution_v2.c"
+#line 19304 "./ThALES_resolution_v2.c"
 }   /* End of before_sample_slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -19106,7 +19452,7 @@ int nowritefile = mccE_sample_mon_nowritefile;
       RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
     }
 }
-#line 19109 "./ThALES_resolution_v2.c"
+#line 19455 "./ThALES_resolution_v2.c"
 }   /* End of E_sample_mon=E_monitor() SETTING parameter declarations. */
 #undef S_pE2
 #undef S_pE
@@ -19248,7 +19594,7 @@ int nowritefile = mccPSD_sample_mon_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 19251 "./ThALES_resolution_v2.c"
+#line 19597 "./ThALES_resolution_v2.c"
 }   /* End of PSD_sample_mon=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -19556,7 +19902,7 @@ if (( mcipSAMPLE == 0 ))
     res_struct.kf_z = V2K*vz;
   }
 }
-#line 19558 "./ThALES_resolution_v2.c"
+#line 19904 "./ThALES_resolution_v2.c"
 }   /* End of res_sample=Res_sample() SETTING parameter declarations. */
 #undef res_struct
 #undef mccompcurname
@@ -19602,7 +19948,287 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component Sample_Out [22] */
+  /* TRACE Component v_sample [22] */
+  mccoordschange(mcposrv_sample, mcrotrv_sample,
+    &mcnlx,
+    &mcnly,
+    &mcnlz,
+    &mcnlvx,
+    &mcnlvy,
+    &mcnlvz,
+    &mcnlsx,
+    &mcnlsy,
+    &mcnlsz);
+  /* define label inside component v_sample (without coords transformations) */
+  mcJumpTrace_v_sample:
+  SIG_MESSAGE("v_sample (Trace)");
+  mcDEBUG_COMP("v_sample")
+  mcDEBUG_STATE(
+    mcnlx,
+    mcnly,
+    mcnlz,
+    mcnlvx,
+    mcnlvy,
+    mcnlvz,
+    mcnlt,
+    mcnlsx,
+    mcnlsy,
+    mcnlsz,
+    mcnlp)
+#define x mcnlx
+#define y mcnly
+#define z mcnlz
+#define vx mcnlvx
+#define vy mcnlvy
+#define vz mcnlvz
+#define t mcnlt
+#define sx mcnlsx
+#define sy mcnlsy
+#define sz mcnlsz
+#define p mcnlp
+
+#define mcabsorbComp mcabsorbCompv_sample
+  STORE_NEUTRON(22,
+    mcnlx,
+    mcnly,
+    mcnlz,
+    mcnlvx,
+    mcnlvy,
+    mcnlvz,
+    mcnlt,
+    mcnlsx,
+    mcnlsy,
+    mcnlsz,
+    mcnlp);
+  mcScattered=0;
+  mcRestore=0;
+  mcNCounter[22]++;
+  mcPCounter[22] += p;
+  mcP2Counter[22] += p*p;
+#define mccompcurname  v_sample
+#define mccompcurtype  V_sample
+#define mccompcurindex 22
+#define VarsV mccv_sample_VarsV
+{   /* Declarations of v_sample=V_sample() SETTING parameters. */
+MCNUM radius = mccv_sample_radius;
+MCNUM thickness = mccv_sample_thickness;
+MCNUM zdepth = mccv_sample_zdepth;
+MCNUM Vc = mccv_sample_Vc;
+MCNUM sigma_abs = mccv_sample_sigma_abs;
+MCNUM sigma_inc = mccv_sample_sigma_inc;
+MCNUM radius_i = mccv_sample_radius_i;
+MCNUM radius_o = mccv_sample_radius_o;
+MCNUM h = mccv_sample_h;
+MCNUM focus_r = mccv_sample_focus_r;
+MCNUM pack = mccv_sample_pack;
+MCNUM frac = mccv_sample_frac;
+MCNUM f_QE = mccv_sample_f_QE;
+MCNUM gamma = mccv_sample_gamma;
+MCNUM target_x = mccv_sample_target_x;
+MCNUM target_y = mccv_sample_target_y;
+MCNUM target_z = mccv_sample_target_z;
+MCNUM focus_xw = mccv_sample_focus_xw;
+MCNUM focus_yh = mccv_sample_focus_yh;
+MCNUM focus_aw = mccv_sample_focus_aw;
+MCNUM focus_ah = mccv_sample_focus_ah;
+MCNUM xwidth = mccv_sample_xwidth;
+MCNUM yheight = mccv_sample_yheight;
+MCNUM zthick = mccv_sample_zthick;
+MCNUM rad_sphere = mccv_sample_rad_sphere;
+MCNUM sig_a = mccv_sample_sig_a;
+MCNUM sig_i = mccv_sample_sig_i;
+MCNUM V0 = mccv_sample_V0;
+int target_index = mccv_sample_target_index;
+MCNUM multiples = mccv_sample_multiples;
+/* 'v_sample=V_sample()' component instance has conditional execution */
+if (( mcipSAMPLE == 1 ))
+
+#line 180 "V_sample.comp"
+{
+  double t0, t3;                /* Entry/exit time for outer cylinder */
+  double t1, t2;                /* Entry/exit time for inner cylinder */
+  double v;                     /* Neutron velocity */
+  double dt0, dt1, dt2, dt;     /* Flight times through sample */
+  double l_full;                /* Flight path length for non-scattered neutron */
+  double l_i, l_o=0;            /* Flight path lenght in/out for scattered neutron */
+  double my_a=0;                  /* Velocity-dependent attenuation factor */
+  double solid_angle=0;         /* Solid angle of target as seen from scattering point */
+  double aim_x=0, aim_y=0, aim_z=1;   /* Position of target relative to scattering point */
+  double v_i, v_f, E_i, E_f; /* initial and final energies and velocities */
+  double dE;                 /* Energy transfer */
+  int    intersect=0;
+
+  if (VarsV.shapetyp == 2)
+    intersect = sphere_intersect(&t0, &t3, x, y, z, vx, vy, vz, rad_sphere);
+  else
+    if (VarsV.shapetyp == 1)
+      intersect = box_intersect(&t0, &t3, x, y, z, vx, vy, vz, xwidth, yheight, zthick);
+  else
+    intersect = cylinder_intersect(&t0, &t3, x, y, z, vx, vy, vz, radius_o, h);
+  if(intersect)
+  {
+    if(t0 < 0) ABSORB; /* we already passed the sample; this is illegal */
+    /* Neutron enters at t=t0. */
+    if(VarsV.shapetyp == 1 || VarsV.shapetyp == 2)
+      t1 = t2 = t3;
+    else
+      if(!radius_i || !cylinder_intersect(&t1, &t2, x, y, z, vx, vy, vz, radius_i, h))
+        t1 = t2 = t3;
+
+    dt0 = t1-t0;                /* Time in sample, ingoing */
+    dt1 = t2-t1;                /* Time in hole */
+    dt2 = t3-t2;                /* Time in sample, outgoing */
+    v = sqrt(vx*vx + vy*vy + vz*vz);
+    l_full = v * (dt0 + dt2);   /* Length of full path through sample */
+    if (v) my_a = VarsV.my_a_v*(2200/v);
+
+    if (frac >= 1 || rand01()<frac)          /* Scattering */
+    {
+      dt = rand01()*(dt0+dt2);    /* Time of scattering (relative to t0) */
+      l_i = v*dt;                 /* Penetration in sample: scattering+abs */
+      if (dt > dt0)
+        dt += dt1;                /* jump to 2nd side of cylinder */
+
+      PROP_DT(dt+t0);             /* Point of scattering */
+
+      if ((VarsV.tx || VarsV.ty || VarsV.tz)) {
+        aim_x = VarsV.tx-x;       /* Vector pointing at target (anal./det.) */
+        aim_y = VarsV.ty-y;
+        aim_z = VarsV.tz-z;
+      }
+      if(VarsV.aw && VarsV.ah) {
+        randvec_target_rect_angular(&vx, &vy, &vz, &solid_angle,
+          aim_x, aim_y, aim_z, VarsV.aw, VarsV.ah, ROT_A_CURRENT_COMP);
+      } else if(VarsV.xw && VarsV.yh) {
+        randvec_target_rect(&vx, &vy, &vz, &solid_angle,
+          aim_x, aim_y, aim_z, VarsV.xw, VarsV.yh, ROT_A_CURRENT_COMP);
+      } else {
+        randvec_target_circle(&vx, &vy, &vz, &solid_angle, aim_x, aim_y, aim_z, focus_r);
+      }
+      NORM(vx, vy, vz);
+
+      v_i = v;          /* Store initial velocity in case of quasielastic */
+      if (rand01()<f_QE)	/* Quasielastic contribution */
+	{
+          E_i = VS2E*v_i*v_i;
+          dE = gamma*tan(PI/2*randpm1());
+          E_f = E_i + dE;
+          if (E_f <= 0)
+            ABSORB;
+	  v_f = SE2V*sqrt(E_f);
+          v = v_f;
+	  /*          printf("vi: %g Ei: %g dE: %g Ef %g vf: %g v: %g \n",
+		      v_i,E_i,dE,E_f,v_f,v); */
+	}
+
+      vx *= v;
+      vy *= v;
+      vz *= v;
+
+      if(VarsV.shapetyp == 0) {
+        if(!cylinder_intersect(&t0, &t3, x, y, z, vx, vy, vz, radius_o, h)) {
+          /* ??? did not hit cylinder */
+          printf("FATAL ERROR: Did not hit cylinder from inside.\n");
+          exit(1);
+        }
+        dt = t3; /* outgoing point */
+        if(cylinder_intersect(&t1, &t2, x, y, z, vx, vy, vz, radius_i, h) &&
+           t2 > 0)
+          dt -= (t2-t1);            /* Subtract hollow part */
+      }
+      else {
+        if(VarsV.shapetyp == 1) {
+	      if(!box_intersect(&t0, &t3, x, y, z, vx, vy, vz, xwidth, yheight, zthick)) {
+            /* ??? did not hit box */
+            printf("FATAL ERROR: Did not hit box from inside.\n");
+            exit(1);
+          }
+          dt = t3;
+        }
+        else {
+	      if(!sphere_intersect(&t0, &t3, x, y, z, vx, vy, vz, rad_sphere)) {
+            /* ??? did not hit sphere */
+            printf("FATAL ERROR: Did not hit sphere from inside.\n");
+            exit(1);
+          }
+          dt = t3;  
+        }
+      }
+      l_o = v*dt; /* trajectory after scattering point: absorption only */
+
+      p *= v/v_i*l_full*VarsV.my_s*exp(-my_a*(l_i+v_i/v*l_o)-VarsV.my_s*l_i);
+      if (!multiples) {
+	/* If no "multiples", correct by applying scattering cross-sec and
+	   implicitly "absorb" further scattering (as in PowderN) 
+	   We are currently (august 2007) having a debate on which solution 
+	   is the most reasonable */
+	p *= exp(-VarsV.my_s*l_o);
+      }
+      /* We do not consider scattering from 2nd part (outgoing) */
+      p /= 4*PI/solid_angle;
+      p /= frac;
+
+      /* Polarisation part (1/3 NSF, 2/3 SF) */
+      sx *= -1.0/3.0;
+      sy *= -1.0/3.0;
+      sz *= -1.0/3.0;
+
+      SCATTER;
+    }
+    else /* Transmitting; always elastic */
+    {
+      p *= exp(-(my_a+VarsV.my_s)*l_full);
+      p /= (1-frac);
+    }
+  }
+}
+#line 20183 "./ThALES_resolution_v2.c"
+}   /* End of v_sample=V_sample() SETTING parameter declarations. */
+#undef VarsV
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+  /* Label for restoring  neutron */
+  mcabsorbCompv_sample:
+  if (RESTORE) /* restore if needed */
+  { RESTORE_NEUTRON(22,
+      mcnlx,
+      mcnly,
+      mcnlz,
+      mcnlvx,
+      mcnlvy,
+      mcnlvz,
+      mcnlt,
+      mcnlsx,
+      mcnlsy,
+      mcnlsz,
+      mcnlp); }
+#undef mcabsorbComp
+#undef p
+#undef sz
+#undef sy
+#undef sx
+#undef t
+#undef vz
+#undef vy
+#undef vx
+#undef z
+#undef y
+#undef x
+  mcDEBUG_STATE(
+mcnlx,
+mcnly,
+mcnlz,
+mcnlvx,
+mcnlvy,
+mcnlvz,
+mcnlt,
+mcnlsx,
+mcnlsy,
+mcnlsz,
+mcnlp)
+
+  /* TRACE Component Sample_Out [23] */
   mccoordschange(mcposrSample_Out, mcrotrSample_Out,
     &mcnlx,
     &mcnly,
@@ -19642,7 +20268,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompSample_Out
-  STORE_NEUTRON(22,
+  STORE_NEUTRON(23,
     mcnlx,
     mcnly,
     mcnlz,
@@ -19656,19 +20282,19 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[22]++;
-  mcPCounter[22] += p;
-  mcP2Counter[22] += p*p;
+  mcNCounter[23]++;
+  mcPCounter[23] += p;
+  mcP2Counter[23] += p*p;
 #define mccompcurname  Sample_Out
 #define mccompcurtype  Arm
-#define mccompcurindex 22
+#define mccompcurindex 23
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
   /* Label for restoring  neutron */
   mcabsorbCompSample_Out:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(22,
+  { RESTORE_NEUTRON(23,
       mcnlx,
       mcnly,
       mcnlz,
@@ -19705,7 +20331,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component after_sample_slit [23] */
+  /* TRACE Component after_sample_slit [24] */
   mccoordschange(mcposrafter_sample_slit, mcrotrafter_sample_slit,
     &mcnlx,
     &mcnly,
@@ -19745,7 +20371,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompafter_sample_slit
-  STORE_NEUTRON(23,
+  STORE_NEUTRON(24,
     mcnlx,
     mcnly,
     mcnlz,
@@ -19759,12 +20385,12 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[23]++;
-  mcPCounter[23] += p;
-  mcP2Counter[23] += p*p;
+  mcNCounter[24]++;
+  mcPCounter[24] += p;
+  mcP2Counter[24] += p*p;
 #define mccompcurname  after_sample_slit
 #define mccompcurtype  Slit
-#define mccompcurindex 23
+#define mccompcurindex 24
 {   /* Declarations of after_sample_slit=Slit() SETTING parameters. */
 MCNUM xmin = mccafter_sample_slit_xmin;
 MCNUM xmax = mccafter_sample_slit_xmax;
@@ -19784,7 +20410,7 @@ MCNUM yheight = mccafter_sample_slit_yheight;
     else
         SCATTER;
 }
-#line 19786 "./ThALES_resolution_v2.c"
+#line 20411 "./ThALES_resolution_v2.c"
 }   /* End of after_sample_slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -19792,7 +20418,7 @@ MCNUM yheight = mccafter_sample_slit_yheight;
   /* Label for restoring  neutron */
   mcabsorbCompafter_sample_slit:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(23,
+  { RESTORE_NEUTRON(24,
       mcnlx,
       mcnly,
       mcnlz,
@@ -19829,7 +20455,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component Ana_Cradle [24] */
+  /* TRACE Component Ana_Cradle [25] */
   mccoordschange(mcposrAna_Cradle, mcrotrAna_Cradle,
     &mcnlx,
     &mcnly,
@@ -19869,7 +20495,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompAna_Cradle
-  STORE_NEUTRON(24,
+  STORE_NEUTRON(25,
     mcnlx,
     mcnly,
     mcnlz,
@@ -19883,19 +20509,19 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[24]++;
-  mcPCounter[24] += p;
-  mcP2Counter[24] += p*p;
+  mcNCounter[25]++;
+  mcPCounter[25] += p;
+  mcP2Counter[25] += p*p;
 #define mccompcurname  Ana_Cradle
 #define mccompcurtype  Arm
-#define mccompcurindex 24
+#define mccompcurindex 25
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
   /* Label for restoring  neutron */
   mcabsorbCompAna_Cradle:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(24,
+  { RESTORE_NEUTRON(25,
       mcnlx,
       mcnly,
       mcnlz,
@@ -19932,7 +20558,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component PSD_analyzer [25] */
+  /* TRACE Component PSD_analyzer [26] */
   mccoordschange(mcposrPSD_analyzer, mcrotrPSD_analyzer,
     &mcnlx,
     &mcnly,
@@ -19972,7 +20598,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompPSD_analyzer
-  STORE_NEUTRON(25,
+  STORE_NEUTRON(26,
     mcnlx,
     mcnly,
     mcnlz,
@@ -19986,12 +20612,12 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[25]++;
-  mcPCounter[25] += p;
-  mcP2Counter[25] += p*p;
+  mcNCounter[26]++;
+  mcPCounter[26] += p;
+  mcP2Counter[26] += p*p;
 #define mccompcurname  PSD_analyzer
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 25
+#define mccompcurindex 26
 #define PSD_N mccPSD_analyzer_PSD_N
 #define PSD_p mccPSD_analyzer_PSD_p
 #define PSD_p2 mccPSD_analyzer_PSD_p2
@@ -20022,7 +20648,7 @@ int nowritefile = mccPSD_analyzer_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 20024 "./ThALES_resolution_v2.c"
+#line 20649 "./ThALES_resolution_v2.c"
 }   /* End of PSD_analyzer=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -20033,7 +20659,7 @@ int nowritefile = mccPSD_analyzer_nowritefile;
   /* Label for restoring  neutron */
   mcabsorbCompPSD_analyzer:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(25,
+  { RESTORE_NEUTRON(26,
       mcnlx,
       mcnly,
       mcnlz,
@@ -20070,7 +20696,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component analyzer [26] */
+  /* TRACE Component analyzer [27] */
   mccoordschange(mcposranalyzer, mcrotranalyzer,
     &mcnlx,
     &mcnly,
@@ -20110,7 +20736,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompanalyzer
-  STORE_NEUTRON(26,
+  STORE_NEUTRON(27,
     mcnlx,
     mcnly,
     mcnlz,
@@ -20124,12 +20750,12 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[26]++;
-  mcPCounter[26] += p;
-  mcP2Counter[26] += p*p;
+  mcNCounter[27]++;
+  mcPCounter[27] += p;
+  mcP2Counter[27] += p*p;
 #define mccompcurname  analyzer
 #define mccompcurtype  Monochromator_curved
-#define mccompcurindex 26
+#define mccompcurindex 27
 #define mos_rms_y mccanalyzer_mos_rms_y
 #define mos_rms_z mccanalyzer_mos_rms_z
 #define mos_rms_max mccanalyzer_mos_rms_max
@@ -20392,7 +21018,7 @@ MCNUM order = mccanalyzer_order;
     }
   } /* End neutron moving towards crystal (if vx)*/
 }
-#line 20394 "./ThALES_resolution_v2.c"
+#line 21019 "./ThALES_resolution_v2.c"
 }   /* End of analyzer=Monochromator_curved() SETTING parameter declarations. */
 #undef tiltV
 #undef tiltH
@@ -20412,7 +21038,7 @@ MCNUM order = mccanalyzer_order;
   /* Label for restoring  neutron */
   mcabsorbCompanalyzer:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(26,
+  { RESTORE_NEUTRON(27,
       mcnlx,
       mcnly,
       mcnlz,
@@ -20449,7 +21075,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component Ana_Out [27] */
+  /* TRACE Component Ana_Out [28] */
   mccoordschange(mcposrAna_Out, mcrotrAna_Out,
     &mcnlx,
     &mcnly,
@@ -20489,7 +21115,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompAna_Out
-  STORE_NEUTRON(27,
+  STORE_NEUTRON(28,
     mcnlx,
     mcnly,
     mcnlz,
@@ -20503,19 +21129,19 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[27]++;
-  mcPCounter[27] += p;
-  mcP2Counter[27] += p*p;
+  mcNCounter[28]++;
+  mcPCounter[28] += p;
+  mcP2Counter[28] += p*p;
 #define mccompcurname  Ana_Out
 #define mccompcurtype  Arm
-#define mccompcurindex 27
+#define mccompcurindex 28
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
   /* Label for restoring  neutron */
   mcabsorbCompAna_Out:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(27,
+  { RESTORE_NEUTRON(28,
       mcnlx,
       mcnly,
       mcnlz,
@@ -20552,7 +21178,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component slit [28] */
+  /* TRACE Component slit [29] */
   mccoordschange(mcposrslit, mcrotrslit,
     &mcnlx,
     &mcnly,
@@ -20592,7 +21218,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompslit
-  STORE_NEUTRON(28,
+  STORE_NEUTRON(29,
     mcnlx,
     mcnly,
     mcnlz,
@@ -20606,12 +21232,12 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[28]++;
-  mcPCounter[28] += p;
-  mcP2Counter[28] += p*p;
+  mcNCounter[29]++;
+  mcPCounter[29] += p;
+  mcP2Counter[29] += p*p;
 #define mccompcurname  slit
 #define mccompcurtype  Slit
-#define mccompcurindex 28
+#define mccompcurindex 29
 {   /* Declarations of slit=Slit() SETTING parameters. */
 MCNUM xmin = mccslit_xmin;
 MCNUM xmax = mccslit_xmax;
@@ -20631,7 +21257,7 @@ MCNUM yheight = mccslit_yheight;
     else
         SCATTER;
 }
-#line 20633 "./ThALES_resolution_v2.c"
+#line 21258 "./ThALES_resolution_v2.c"
 }   /* End of slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -20639,7 +21265,7 @@ MCNUM yheight = mccslit_yheight;
   /* Label for restoring  neutron */
   mcabsorbCompslit:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(28,
+  { RESTORE_NEUTRON(29,
       mcnlx,
       mcnly,
       mcnlz,
@@ -20676,7 +21302,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component PSD_det [29] */
+  /* TRACE Component PSD_det [30] */
   mccoordschange(mcposrPSD_det, mcrotrPSD_det,
     &mcnlx,
     &mcnly,
@@ -20716,7 +21342,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompPSD_det
-  STORE_NEUTRON(29,
+  STORE_NEUTRON(30,
     mcnlx,
     mcnly,
     mcnlz,
@@ -20730,12 +21356,12 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[29]++;
-  mcPCounter[29] += p;
-  mcP2Counter[29] += p*p;
+  mcNCounter[30]++;
+  mcPCounter[30] += p;
+  mcP2Counter[30] += p*p;
 #define mccompcurname  PSD_det
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 29
+#define mccompcurindex 30
 #define PSD_N mccPSD_det_PSD_N
 #define PSD_p mccPSD_det_PSD_p
 #define PSD_p2 mccPSD_det_PSD_p2
@@ -20766,7 +21392,7 @@ int nowritefile = mccPSD_det_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 20768 "./ThALES_resolution_v2.c"
+#line 21393 "./ThALES_resolution_v2.c"
 }   /* End of PSD_det=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -20777,7 +21403,7 @@ int nowritefile = mccPSD_det_nowritefile;
   /* Label for restoring  neutron */
   mcabsorbCompPSD_det:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(29,
+  { RESTORE_NEUTRON(30,
       mcnlx,
       mcnly,
       mcnlz,
@@ -20814,7 +21440,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component res_monitor [30] */
+  /* TRACE Component res_monitor [31] */
   mccoordschange(mcposrres_monitor, mcrotrres_monitor,
     &mcnlx,
     &mcnly,
@@ -20854,7 +21480,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompres_monitor
-  STORE_NEUTRON(30,
+  STORE_NEUTRON(31,
     mcnlx,
     mcnly,
     mcnlz,
@@ -20868,12 +21494,12 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[30]++;
-  mcPCounter[30] += p;
-  mcP2Counter[30] += p*p;
+  mcNCounter[31]++;
+  mcPCounter[31] += p;
+  mcP2Counter[31] += p*p;
 #define mccompcurname  res_monitor
 #define mccompcurtype  Res_monitor
-#define mccompcurindex 30
+#define mccompcurindex 31
 #define res_sample_comp mccres_monitor_res_sample_comp
 #define DEFS mccres_monitor_DEFS
 #define Vars mccres_monitor_Vars
@@ -20893,6 +21519,9 @@ MCNUM zmin = mccres_monitor_zmin;
 MCNUM zmax = mccres_monitor_zmax;
 MCNUM bufsize = mccres_monitor_bufsize;
 MCNUM restore_neutron = mccres_monitor_restore_neutron;
+/* 'res_monitor=Res_monitor()' component instance has conditional execution */
+if (( mcipSAMPLE == 0 ))
+
 #line 131 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../monitors/Res_monitor.comp"
 {
   double  t0 = 0;
@@ -20968,7 +21597,7 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
     }
 
 }
-#line 20970 "./ThALES_resolution_v2.c"
+#line 21597 "./ThALES_resolution_v2.c"
 }   /* End of res_monitor=Res_monitor() SETTING parameter declarations. */
 #undef buffer_index
 #undef Vars
@@ -20980,7 +21609,7 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
   /* Label for restoring  neutron */
   mcabsorbCompres_monitor:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(30,
+  { RESTORE_NEUTRON(31,
       mcnlx,
       mcnly,
       mcnlz,
@@ -21017,7 +21646,7 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component detector_all [31] */
+  /* TRACE Component detector_all [32] */
   mccoordschange(mcposrdetector_all, mcrotrdetector_all,
     &mcnlx,
     &mcnly,
@@ -21057,7 +21686,7 @@ mcnlp)
 #define p mcnlp
 
 #define mcabsorbComp mcabsorbCompdetector_all
-  STORE_NEUTRON(31,
+  STORE_NEUTRON(32,
     mcnlx,
     mcnly,
     mcnlz,
@@ -21071,12 +21700,12 @@ mcnlp)
     mcnlp);
   mcScattered=0;
   mcRestore=0;
-  mcNCounter[31]++;
-  mcPCounter[31] += p;
-  mcP2Counter[31] += p*p;
+  mcNCounter[32]++;
+  mcPCounter[32] += p;
+  mcP2Counter[32] += p*p;
 #define mccompcurname  detector_all
 #define mccompcurtype  Monitor
-#define mccompcurindex 31
+#define mccompcurindex 32
 #define Nsum mccdetector_all_Nsum
 #define psum mccdetector_all_psum
 #define p2sum mccdetector_all_p2sum
@@ -21102,7 +21731,7 @@ MCNUM restore_neutron = mccdetector_all_restore_neutron;
       RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
     }
 }
-#line 21104 "./ThALES_resolution_v2.c"
+#line 21731 "./ThALES_resolution_v2.c"
 }   /* End of detector_all=Monitor() SETTING parameter declarations. */
 #undef p2sum
 #undef psum
@@ -21113,7 +21742,7 @@ MCNUM restore_neutron = mccdetector_all_restore_neutron;
   /* Label for restoring  neutron */
   mcabsorbCompdetector_all:
   if (RESTORE) /* restore if needed */
-  { RESTORE_NEUTRON(31,
+  { RESTORE_NEUTRON(32,
       mcnlx,
       mcnly,
       mcnlz,
@@ -21214,7 +21843,7 @@ MCNUM minutes = mccOrigin_minutes;
 
   }
 }
-#line 21216 "./ThALES_resolution_v2.c"
+#line 21843 "./ThALES_resolution_v2.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -21257,7 +21886,7 @@ int nowritefile = mccl_monitor_nowritefile;
         filename);
     }
 }
-#line 21259 "./ThALES_resolution_v2.c"
+#line 21886 "./ThALES_resolution_v2.c"
 }   /* End of l_monitor=L_monitor() SETTING parameter declarations. */
 #undef L_p2
 #undef L_p
@@ -21305,7 +21934,7 @@ int nowritefile = mccE_sample_mon_nowritefile;
      S_pE/S_p,sqrt(S_pE2/S_p - S_pE*S_pE/(S_p*S_p)) );
     }
 }
-#line 21307 "./ThALES_resolution_v2.c"
+#line 21934 "./ThALES_resolution_v2.c"
 }   /* End of E_sample_mon=E_monitor() SETTING parameter declarations. */
 #undef S_pE2
 #undef S_pE
@@ -21351,7 +21980,7 @@ if (!nowritefile) {
     filename);
 }
 }
-#line 21353 "./ThALES_resolution_v2.c"
+#line 21980 "./ThALES_resolution_v2.c"
 }   /* End of PSD_sample_mon=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -21364,7 +21993,7 @@ if (!nowritefile) {
   SIG_MESSAGE("PSD_analyzer (Save)");
 #define mccompcurname  PSD_analyzer
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 25
+#define mccompcurindex 26
 #define PSD_N mccPSD_analyzer_PSD_N
 #define PSD_p mccPSD_analyzer_PSD_p
 #define PSD_p2 mccPSD_analyzer_PSD_p2
@@ -21393,7 +22022,7 @@ if (!nowritefile) {
     filename);
 }
 }
-#line 21395 "./ThALES_resolution_v2.c"
+#line 22022 "./ThALES_resolution_v2.c"
 }   /* End of PSD_analyzer=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -21406,7 +22035,7 @@ if (!nowritefile) {
   SIG_MESSAGE("PSD_det (Save)");
 #define mccompcurname  PSD_det
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 29
+#define mccompcurindex 30
 #define PSD_N mccPSD_det_PSD_N
 #define PSD_p mccPSD_det_PSD_p
 #define PSD_p2 mccPSD_det_PSD_p2
@@ -21435,7 +22064,7 @@ if (!nowritefile) {
     filename);
 }
 }
-#line 21437 "./ThALES_resolution_v2.c"
+#line 22064 "./ThALES_resolution_v2.c"
 }   /* End of PSD_det=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -21448,7 +22077,7 @@ if (!nowritefile) {
   SIG_MESSAGE("res_monitor (Save)");
 #define mccompcurname  res_monitor
 #define mccompcurtype  Res_monitor
-#define mccompcurindex 30
+#define mccompcurindex 31
 #define res_sample_comp mccres_monitor_res_sample_comp
 #define DEFS mccres_monitor_DEFS
 #define Vars mccres_monitor_Vars
@@ -21473,7 +22102,7 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
   /* save results, but do not free pointers */
   Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 21475 "./ThALES_resolution_v2.c"
+#line 22102 "./ThALES_resolution_v2.c"
 }   /* End of res_monitor=Res_monitor() SETTING parameter declarations. */
 #undef buffer_index
 #undef Vars
@@ -21487,7 +22116,7 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
   SIG_MESSAGE("detector_all (Save)");
 #define mccompcurname  detector_all
 #define mccompcurtype  Monitor
-#define mccompcurindex 31
+#define mccompcurindex 32
 #define Nsum mccdetector_all_Nsum
 #define psum mccdetector_all_psum
 #define p2sum mccdetector_all_p2sum
@@ -21505,7 +22134,7 @@ MCNUM restore_neutron = mccdetector_all_restore_neutron;
     sprintf(title, "Single monitor %s", NAME_CURRENT_COMP);
     DETECTOR_OUT_0D(title, Nsum, psum, p2sum);
 }
-#line 21507 "./ThALES_resolution_v2.c"
+#line 22134 "./ThALES_resolution_v2.c"
 }   /* End of detector_all=Monitor() SETTING parameter declarations. */
 #undef p2sum
 #undef psum
@@ -21548,7 +22177,7 @@ MCNUM minutes = mccOrigin_minutes;
     fprintf(stdout, "%g [min] ", difftime(NowTime,StartTime)/60.0);
   fprintf(stdout, "\n");
 }
-#line 21550 "./ThALES_resolution_v2.c"
+#line 22177 "./ThALES_resolution_v2.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -21620,7 +22249,7 @@ int target_index = mccHCS_target_index;
   Table_Free(&pTable_x);
   Table_Free(&pTable_y);
 }
-#line 21621 "./ThALES_resolution_v2.c"
+#line 22248 "./ThALES_resolution_v2.c"
 }   /* End of HCS=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -21698,7 +22327,7 @@ if (GVars.warnings > 100) {
   fprintf(stderr,"%s: warning: This message has been repeated %g times\n", GVars.compcurname, GVars.warnings);
 }
 }
-#line 21697 "./ThALES_resolution_v2.c"
+#line 22324 "./ThALES_resolution_v2.c"
 }   /* End of H5_rect=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -21764,7 +22393,7 @@ if (GVars.warnings > 100) {
   fprintf(stderr,"%s: warning: This message has been repeated %g times\n", GVars.compcurname, GVars.warnings);
 }
 }
-#line 21760 "./ThALES_resolution_v2.c"
+#line 22387 "./ThALES_resolution_v2.c"
 }   /* End of H53_inpile=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -21824,7 +22453,7 @@ if (GVars.warnings > 100) {
   fprintf(stderr,"%s: warning: This message has been repeated %g times\n", GVars.compcurname, GVars.warnings);
 }
 }
-#line 21819 "./ThALES_resolution_v2.c"
+#line 22446 "./ThALES_resolution_v2.c"
 }   /* End of H53_Obt=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -21887,7 +22516,7 @@ if (GVars.warnings > 100) {
   fprintf(stderr,"%s: warning: This message has been repeated %g times\n", GVars.compcurname, GVars.warnings);
 }
 }
-#line 21880 "./ThALES_resolution_v2.c"
+#line 22507 "./ThALES_resolution_v2.c"
 }   /* End of H53_VSComC1=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -21977,7 +22606,7 @@ MCNUM curvature_v = mccH53_Nose_curvature_v;
   free(w1_in);
   free(w2_out);
 }
-#line 21969 "./ThALES_resolution_v2.c"
+#line 22596 "./ThALES_resolution_v2.c"
 }   /* End of H53_Nose=Guide_tapering() SETTING parameter declarations. */
 #undef rotation_v
 #undef rotation_h
@@ -22079,7 +22708,7 @@ MCNUM order = mccH53_ThALES_Monochromator_order;
   if (tiltH) free(tiltH);
   if (tiltV) free(tiltV);
 }
-#line 22067 "./ThALES_resolution_v2.c"
+#line 22694 "./ThALES_resolution_v2.c"
 }   /* End of H53_ThALES_Monochromator=Monochromator_curved() SETTING parameter declarations. */
 #undef tiltV
 #undef tiltH
@@ -22135,7 +22764,7 @@ int nowritefile = mccPSD_sample_mon_nowritefile;
   destroy_darr2d(PSD_p);
   destroy_darr2d(PSD_p2);
 }
-#line 22119 "./ThALES_resolution_v2.c"
+#line 22746 "./ThALES_resolution_v2.c"
 }   /* End of PSD_sample_mon=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -22153,20 +22782,23 @@ int nowritefile = mccPSD_sample_mon_nowritefile;
     if (!mcNCounter[21]) fprintf(stderr, "Warning: No neutron could reach Component[21] res_sample\n");
     if (mcAbsorbProp[21]) fprintf(stderr, "Warning: %g events were removed in Component[21] res_sample=Res_sample()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[21]);
-    if (!mcNCounter[22]) fprintf(stderr, "Warning: No neutron could reach Component[22] Sample_Out\n");
-    if (mcAbsorbProp[22]) fprintf(stderr, "Warning: %g events were removed in Component[22] Sample_Out=Arm()\n"
+    if (!mcNCounter[22]) fprintf(stderr, "Warning: No neutron could reach Component[22] v_sample\n");
+    if (mcAbsorbProp[22]) fprintf(stderr, "Warning: %g events were removed in Component[22] v_sample=V_sample()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[22]);
-    if (!mcNCounter[23]) fprintf(stderr, "Warning: No neutron could reach Component[23] after_sample_slit\n");
-    if (mcAbsorbProp[23]) fprintf(stderr, "Warning: %g events were removed in Component[23] after_sample_slit=Slit()\n"
+    if (!mcNCounter[23]) fprintf(stderr, "Warning: No neutron could reach Component[23] Sample_Out\n");
+    if (mcAbsorbProp[23]) fprintf(stderr, "Warning: %g events were removed in Component[23] Sample_Out=Arm()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[23]);
-    if (!mcNCounter[24]) fprintf(stderr, "Warning: No neutron could reach Component[24] Ana_Cradle\n");
-    if (mcAbsorbProp[24]) fprintf(stderr, "Warning: %g events were removed in Component[24] Ana_Cradle=Arm()\n"
+    if (!mcNCounter[24]) fprintf(stderr, "Warning: No neutron could reach Component[24] after_sample_slit\n");
+    if (mcAbsorbProp[24]) fprintf(stderr, "Warning: %g events were removed in Component[24] after_sample_slit=Slit()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[24]);
+    if (!mcNCounter[25]) fprintf(stderr, "Warning: No neutron could reach Component[25] Ana_Cradle\n");
+    if (mcAbsorbProp[25]) fprintf(stderr, "Warning: %g events were removed in Component[25] Ana_Cradle=Arm()\n"
+"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[25]);
   /* User FINALLY code for component 'PSD_analyzer'. */
   SIG_MESSAGE("PSD_analyzer (Finally)");
 #define mccompcurname  PSD_analyzer
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 25
+#define mccompcurindex 26
 #define PSD_N mccPSD_analyzer_PSD_N
 #define PSD_p mccPSD_analyzer_PSD_p
 #define PSD_p2 mccPSD_analyzer_PSD_p2
@@ -22188,7 +22820,7 @@ int nowritefile = mccPSD_analyzer_nowritefile;
   destroy_darr2d(PSD_p);
   destroy_darr2d(PSD_p2);
 }
-#line 22166 "./ThALES_resolution_v2.c"
+#line 22795 "./ThALES_resolution_v2.c"
 }   /* End of PSD_analyzer=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -22197,14 +22829,14 @@ int nowritefile = mccPSD_analyzer_nowritefile;
 #undef mccompcurtype
 #undef mccompcurindex
 
-    if (!mcNCounter[25]) fprintf(stderr, "Warning: No neutron could reach Component[25] PSD_analyzer\n");
-    if (mcAbsorbProp[25]) fprintf(stderr, "Warning: %g events were removed in Component[25] PSD_analyzer=PSD_monitor()\n"
-"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[25]);
+    if (!mcNCounter[26]) fprintf(stderr, "Warning: No neutron could reach Component[26] PSD_analyzer\n");
+    if (mcAbsorbProp[26]) fprintf(stderr, "Warning: %g events were removed in Component[26] PSD_analyzer=PSD_monitor()\n"
+"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[26]);
   /* User FINALLY code for component 'analyzer'. */
   SIG_MESSAGE("analyzer (Finally)");
 #define mccompcurname  analyzer
 #define mccompcurtype  Monochromator_curved
-#define mccompcurindex 26
+#define mccompcurindex 27
 #define mos_rms_y mccanalyzer_mos_rms_y
 #define mos_rms_z mccanalyzer_mos_rms_z
 #define mos_rms_max mccanalyzer_mos_rms_max
@@ -22245,7 +22877,7 @@ MCNUM order = mccanalyzer_order;
   if (tiltH) free(tiltH);
   if (tiltV) free(tiltV);
 }
-#line 22222 "./ThALES_resolution_v2.c"
+#line 22851 "./ThALES_resolution_v2.c"
 }   /* End of analyzer=Monochromator_curved() SETTING parameter declarations. */
 #undef tiltV
 #undef tiltH
@@ -22263,20 +22895,20 @@ MCNUM order = mccanalyzer_order;
 #undef mccompcurtype
 #undef mccompcurindex
 
-    if (!mcNCounter[26]) fprintf(stderr, "Warning: No neutron could reach Component[26] analyzer\n");
-    if (mcAbsorbProp[26]) fprintf(stderr, "Warning: %g events were removed in Component[26] analyzer=Monochromator_curved()\n"
-"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[26]);
-    if (!mcNCounter[27]) fprintf(stderr, "Warning: No neutron could reach Component[27] Ana_Out\n");
-    if (mcAbsorbProp[27]) fprintf(stderr, "Warning: %g events were removed in Component[27] Ana_Out=Arm()\n"
+    if (!mcNCounter[27]) fprintf(stderr, "Warning: No neutron could reach Component[27] analyzer\n");
+    if (mcAbsorbProp[27]) fprintf(stderr, "Warning: %g events were removed in Component[27] analyzer=Monochromator_curved()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[27]);
-    if (!mcNCounter[28]) fprintf(stderr, "Warning: No neutron could reach Component[28] slit\n");
-    if (mcAbsorbProp[28]) fprintf(stderr, "Warning: %g events were removed in Component[28] slit=Slit()\n"
+    if (!mcNCounter[28]) fprintf(stderr, "Warning: No neutron could reach Component[28] Ana_Out\n");
+    if (mcAbsorbProp[28]) fprintf(stderr, "Warning: %g events were removed in Component[28] Ana_Out=Arm()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[28]);
+    if (!mcNCounter[29]) fprintf(stderr, "Warning: No neutron could reach Component[29] slit\n");
+    if (mcAbsorbProp[29]) fprintf(stderr, "Warning: %g events were removed in Component[29] slit=Slit()\n"
+"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[29]);
   /* User FINALLY code for component 'PSD_det'. */
   SIG_MESSAGE("PSD_det (Finally)");
 #define mccompcurname  PSD_det
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 29
+#define mccompcurindex 30
 #define PSD_N mccPSD_det_PSD_N
 #define PSD_p mccPSD_det_PSD_p
 #define PSD_p2 mccPSD_det_PSD_p2
@@ -22298,7 +22930,7 @@ int nowritefile = mccPSD_det_nowritefile;
   destroy_darr2d(PSD_p);
   destroy_darr2d(PSD_p2);
 }
-#line 22272 "./ThALES_resolution_v2.c"
+#line 22901 "./ThALES_resolution_v2.c"
 }   /* End of PSD_det=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -22307,14 +22939,14 @@ int nowritefile = mccPSD_det_nowritefile;
 #undef mccompcurtype
 #undef mccompcurindex
 
-    if (!mcNCounter[29]) fprintf(stderr, "Warning: No neutron could reach Component[29] PSD_det\n");
-    if (mcAbsorbProp[29]) fprintf(stderr, "Warning: %g events were removed in Component[29] PSD_det=PSD_monitor()\n"
-"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[29]);
+    if (!mcNCounter[30]) fprintf(stderr, "Warning: No neutron could reach Component[30] PSD_det\n");
+    if (mcAbsorbProp[30]) fprintf(stderr, "Warning: %g events were removed in Component[30] PSD_det=PSD_monitor()\n"
+"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[30]);
   /* User FINALLY code for component 'res_monitor'. */
   SIG_MESSAGE("res_monitor (Finally)");
 #define mccompcurname  res_monitor
 #define mccompcurtype  Res_monitor
-#define mccompcurindex 30
+#define mccompcurindex 31
 #define res_sample_comp mccres_monitor_res_sample_comp
 #define DEFS mccres_monitor_DEFS
 #define Vars mccres_monitor_Vars
@@ -22341,7 +22973,7 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
   Monitor_nD_Finally(&DEFS, &Vars);
 
 }
-#line 22314 "./ThALES_resolution_v2.c"
+#line 22943 "./ThALES_resolution_v2.c"
 }   /* End of res_monitor=Res_monitor() SETTING parameter declarations. */
 #undef buffer_index
 #undef Vars
@@ -22351,12 +22983,12 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
 #undef mccompcurtype
 #undef mccompcurindex
 
-    if (!mcNCounter[30]) fprintf(stderr, "Warning: No neutron could reach Component[30] res_monitor\n");
-    if (mcAbsorbProp[30]) fprintf(stderr, "Warning: %g events were removed in Component[30] res_monitor=Res_monitor()\n"
-"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[30]);
-    if (!mcNCounter[31]) fprintf(stderr, "Warning: No neutron could reach Component[31] detector_all\n");
-    if (mcAbsorbProp[31]) fprintf(stderr, "Warning: %g events were removed in Component[31] detector_all=Monitor()\n"
+    if (!mcNCounter[31]) fprintf(stderr, "Warning: No neutron could reach Component[31] res_monitor\n");
+    if (mcAbsorbProp[31]) fprintf(stderr, "Warning: %g events were removed in Component[31] res_monitor=Res_monitor()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[31]);
+    if (!mcNCounter[32]) fprintf(stderr, "Warning: No neutron could reach Component[32] detector_all\n");
+    if (mcAbsorbProp[32]) fprintf(stderr, "Warning: %g events were removed in Component[32] detector_all=Monitor()\n"
+"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[32]);
   mcsiminfo_close(); 
 } /* end finally */
 #define magnify mcdis_magnify
@@ -22391,7 +23023,7 @@ MCNUM minutes = mccOrigin_minutes;
 {
   
 }
-#line 22362 "./ThALES_resolution_v2.c"
+#line 22991 "./ThALES_resolution_v2.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -22504,7 +23136,7 @@ int target_index = mccHCS_target_index;
     dashed_line(0,0,0, -focus_xw/2, focus_yh/2,dist, 4);
   }
 }
-#line 22475 "./ThALES_resolution_v2.c"
+#line 23104 "./ThALES_resolution_v2.c"
 }   /* End of HCS=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -22541,7 +23173,7 @@ int target_index = mccHCS_target_index;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 22512 "./ThALES_resolution_v2.c"
+#line 23141 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -22652,7 +23284,7 @@ char* reflect = mccH5_rect_reflect;
   }
 
 }
-#line 22623 "./ThALES_resolution_v2.c"
+#line 23252 "./ThALES_resolution_v2.c"
 }   /* End of H5_rect=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -22674,7 +23306,7 @@ char* reflect = mccH5_rect_reflect;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 22645 "./ThALES_resolution_v2.c"
+#line 23274 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -22693,7 +23325,7 @@ char* reflect = mccH5_rect_reflect;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 22664 "./ThALES_resolution_v2.c"
+#line 23293 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -22804,7 +23436,7 @@ char* reflect = mccH53_inpile_reflect;
   }
 
 }
-#line 22775 "./ThALES_resolution_v2.c"
+#line 23404 "./ThALES_resolution_v2.c"
 }   /* End of H53_inpile=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -22918,7 +23550,7 @@ char* reflect = mccH53_Obt_reflect;
   }
 
 }
-#line 22889 "./ThALES_resolution_v2.c"
+#line 23518 "./ThALES_resolution_v2.c"
 }   /* End of H53_Obt=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -22940,7 +23572,7 @@ char* reflect = mccH53_Obt_reflect;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 22911 "./ThALES_resolution_v2.c"
+#line 23540 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23051,7 +23683,7 @@ char* reflect = mccH53_VSComC1_reflect;
   }
 
 }
-#line 23022 "./ThALES_resolution_v2.c"
+#line 23651 "./ThALES_resolution_v2.c"
 }   /* End of H53_VSComC1=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -23157,7 +23789,7 @@ MCNUM curvature_v = mccH53_Nose_curvature_v;
   }
 
 }
-#line 23128 "./ThALES_resolution_v2.c"
+#line 23757 "./ThALES_resolution_v2.c"
 }   /* End of H53_Nose=Guide_tapering() SETTING parameter declarations. */
 #undef rotation_v
 #undef rotation_h
@@ -23239,7 +23871,7 @@ MCNUM yheight = mccbefore_monochromator_slit_yheight;
     circle("xy",0,0,0,radius);
   }
 }
-#line 23210 "./ThALES_resolution_v2.c"
+#line 23839 "./ThALES_resolution_v2.c"
 }   /* End of before_monochromator_slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -23276,7 +23908,7 @@ int nowritefile = mccl_monitor_nowritefile;
                (double)xmin, (double)ymax, 0.0,
                (double)xmin, (double)ymin, 0.0);
 }
-#line 23247 "./ThALES_resolution_v2.c"
+#line 23876 "./ThALES_resolution_v2.c"
 }   /* End of l_monitor=L_monitor() SETTING parameter declarations. */
 #undef L_p2
 #undef L_p
@@ -23300,7 +23932,7 @@ int nowritefile = mccl_monitor_nowritefile;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 23271 "./ThALES_resolution_v2.c"
+#line 23900 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23374,7 +24006,7 @@ MCNUM order = mccH53_ThALES_Monochromator_order;
      }
    }
 }
-#line 23345 "./ThALES_resolution_v2.c"
+#line 23974 "./ThALES_resolution_v2.c"
 }   /* End of H53_ThALES_Monochromator=Monochromator_curved() SETTING parameter declarations. */
 #undef tiltV
 #undef tiltH
@@ -23406,7 +24038,7 @@ MCNUM order = mccH53_ThALES_Monochromator_order;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 23377 "./ThALES_resolution_v2.c"
+#line 24006 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23448,7 +24080,7 @@ MCNUM yheight = mccbefore_sample_slit_yheight;
     circle("xy",0,0,0,radius);
   }
 }
-#line 23419 "./ThALES_resolution_v2.c"
+#line 24048 "./ThALES_resolution_v2.c"
 }   /* End of before_sample_slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -23488,7 +24120,7 @@ int nowritefile = mccE_sample_mon_nowritefile;
                (double)xmin, (double)ymax, 0.0,
                (double)xmin, (double)ymin, 0.0);
 }
-#line 23459 "./ThALES_resolution_v2.c"
+#line 24088 "./ThALES_resolution_v2.c"
 }   /* End of E_sample_mon=E_monitor() SETTING parameter declarations. */
 #undef S_pE2
 #undef S_pE
@@ -23531,7 +24163,7 @@ int nowritefile = mccPSD_sample_mon_nowritefile;
     (double)xmin, (double)ymax, 0.0,
     (double)xmin, (double)ymin, 0.0);
 }
-#line 23502 "./ThALES_resolution_v2.c"
+#line 24131 "./ThALES_resolution_v2.c"
 }   /* End of PSD_sample_mon=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -23554,7 +24186,7 @@ int nowritefile = mccPSD_sample_mon_nowritefile;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 23525 "./ThALES_resolution_v2.c"
+#line 24154 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23627,9 +24259,101 @@ int target_index = mccres_sample_target_index;
     }
   }
 }
-#line 23598 "./ThALES_resolution_v2.c"
+#line 24227 "./ThALES_resolution_v2.c"
 }   /* End of res_sample=Res_sample() SETTING parameter declarations. */
 #undef res_struct
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+  /* MCDISPLAY code for component 'v_sample'. */
+  SIG_MESSAGE("v_sample (McDisplay)");
+  printf("MCDISPLAY: component %s\n", "v_sample");
+#define mccompcurname  v_sample
+#define mccompcurtype  V_sample
+#define mccompcurindex 22
+#define VarsV mccv_sample_VarsV
+{   /* Declarations of v_sample=V_sample() SETTING parameters. */
+MCNUM radius = mccv_sample_radius;
+MCNUM thickness = mccv_sample_thickness;
+MCNUM zdepth = mccv_sample_zdepth;
+MCNUM Vc = mccv_sample_Vc;
+MCNUM sigma_abs = mccv_sample_sigma_abs;
+MCNUM sigma_inc = mccv_sample_sigma_inc;
+MCNUM radius_i = mccv_sample_radius_i;
+MCNUM radius_o = mccv_sample_radius_o;
+MCNUM h = mccv_sample_h;
+MCNUM focus_r = mccv_sample_focus_r;
+MCNUM pack = mccv_sample_pack;
+MCNUM frac = mccv_sample_frac;
+MCNUM f_QE = mccv_sample_f_QE;
+MCNUM gamma = mccv_sample_gamma;
+MCNUM target_x = mccv_sample_target_x;
+MCNUM target_y = mccv_sample_target_y;
+MCNUM target_z = mccv_sample_target_z;
+MCNUM focus_xw = mccv_sample_focus_xw;
+MCNUM focus_yh = mccv_sample_focus_yh;
+MCNUM focus_aw = mccv_sample_focus_aw;
+MCNUM focus_ah = mccv_sample_focus_ah;
+MCNUM xwidth = mccv_sample_xwidth;
+MCNUM yheight = mccv_sample_yheight;
+MCNUM zthick = mccv_sample_zthick;
+MCNUM rad_sphere = mccv_sample_rad_sphere;
+MCNUM sig_a = mccv_sample_sig_a;
+MCNUM sig_i = mccv_sample_sig_i;
+MCNUM V0 = mccv_sample_V0;
+int target_index = mccv_sample_target_index;
+MCNUM multiples = mccv_sample_multiples;
+#line 320 "V_sample.comp"
+{
+  
+  if (VarsV.shapetyp == 0) {
+    circle("xz", 0,  h/2.0, 0, radius_i);
+    circle("xz", 0,  h/2.0, 0, radius_o);
+    circle("xz", 0, -h/2.0, 0, radius_i);
+    circle("xz", 0, -h/2.0, 0, radius_o);
+    line(-radius_i, -h/2.0, 0, -radius_i, +h/2.0, 0);
+    line(+radius_i, -h/2.0, 0, +radius_i, +h/2.0, 0);
+    line(0, -h/2.0, -radius_i, 0, +h/2.0, -radius_i);
+    line(0, -h/2.0, +radius_i, 0, +h/2.0, +radius_i);
+    line(-radius_o, -h/2.0, 0, -radius_o, +h/2.0, 0);
+    line(+radius_o, -h/2.0, 0, +radius_o, +h/2.0, 0);
+    line(0, -h/2.0, -radius_o, 0, +h/2.0, -radius_o);
+    line(0, -h/2.0, +radius_o, 0, +h/2.0, +radius_o);
+  }
+  else { 
+	if (VarsV.shapetyp == 1) {
+      double xmin = -0.5*xwidth;
+      double xmax =  0.5*xwidth;
+      double ymin = -0.5*yheight;
+      double ymax =  0.5*yheight;
+      double zmin = -0.5*zthick;
+      double zmax =  0.5*zthick;
+      multiline(5, xmin, ymin, zmin,
+                   xmax, ymin, zmin,
+                   xmax, ymax, zmin,
+                   xmin, ymax, zmin,
+                   xmin, ymin, zmin);
+      multiline(5, xmin, ymin, zmax,
+                   xmax, ymin, zmax,
+                   xmax, ymax, zmax,
+                   xmin, ymax, zmax,
+                   xmin, ymin, zmax);
+      line(xmin, ymin, zmin, xmin, ymin, zmax);
+      line(xmax, ymin, zmin, xmax, ymin, zmax);
+      line(xmin, ymax, zmin, xmin, ymax, zmax);
+      line(xmax, ymax, zmin, xmax, ymax, zmax);
+    }
+    else {
+      circle("xy", 0,  0.0, 0, rad_sphere);
+      circle("xz", 0,  0.0, 0, rad_sphere);
+      circle("yz", 0,  0.0, 0, rad_sphere);        
+    }
+  }
+}
+#line 24319 "./ThALES_resolution_v2.c"
+}   /* End of v_sample=V_sample() SETTING parameter declarations. */
+#undef VarsV
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23639,7 +24363,7 @@ int target_index = mccres_sample_target_index;
   printf("MCDISPLAY: component %s\n", "Sample_Out");
 #define mccompcurname  Sample_Out
 #define mccompcurtype  Arm
-#define mccompcurindex 22
+#define mccompcurindex 23
 #line 40 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../optics/Arm.comp"
 {
   /* A bit ugly; hard-coded dimensions. */
@@ -23648,7 +24372,7 @@ int target_index = mccres_sample_target_index;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 23619 "./ThALES_resolution_v2.c"
+#line 24340 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23658,7 +24382,7 @@ int target_index = mccres_sample_target_index;
   printf("MCDISPLAY: component %s\n", "after_sample_slit");
 #define mccompcurname  after_sample_slit
 #define mccompcurtype  Slit
-#define mccompcurindex 23
+#define mccompcurindex 24
 {   /* Declarations of after_sample_slit=Slit() SETTING parameters. */
 MCNUM xmin = mccafter_sample_slit_xmin;
 MCNUM xmax = mccafter_sample_slit_xmax;
@@ -23690,7 +24414,7 @@ MCNUM yheight = mccafter_sample_slit_yheight;
     circle("xy",0,0,0,radius);
   }
 }
-#line 23661 "./ThALES_resolution_v2.c"
+#line 24382 "./ThALES_resolution_v2.c"
 }   /* End of after_sample_slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -23701,7 +24425,7 @@ MCNUM yheight = mccafter_sample_slit_yheight;
   printf("MCDISPLAY: component %s\n", "Ana_Cradle");
 #define mccompcurname  Ana_Cradle
 #define mccompcurtype  Arm
-#define mccompcurindex 24
+#define mccompcurindex 25
 #line 40 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../optics/Arm.comp"
 {
   /* A bit ugly; hard-coded dimensions. */
@@ -23710,7 +24434,7 @@ MCNUM yheight = mccafter_sample_slit_yheight;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 23681 "./ThALES_resolution_v2.c"
+#line 24402 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23720,7 +24444,7 @@ MCNUM yheight = mccafter_sample_slit_yheight;
   printf("MCDISPLAY: component %s\n", "PSD_analyzer");
 #define mccompcurname  PSD_analyzer
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 25
+#define mccompcurindex 26
 #define PSD_N mccPSD_analyzer_PSD_N
 #define PSD_p mccPSD_analyzer_PSD_p
 #define PSD_p2 mccPSD_analyzer_PSD_p2
@@ -23745,7 +24469,7 @@ int nowritefile = mccPSD_analyzer_nowritefile;
     (double)xmin, (double)ymax, 0.0,
     (double)xmin, (double)ymin, 0.0);
 }
-#line 23716 "./ThALES_resolution_v2.c"
+#line 24437 "./ThALES_resolution_v2.c"
 }   /* End of PSD_analyzer=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -23759,7 +24483,7 @@ int nowritefile = mccPSD_analyzer_nowritefile;
   printf("MCDISPLAY: component %s\n", "analyzer");
 #define mccompcurname  analyzer
 #define mccompcurtype  Monochromator_curved
-#define mccompcurindex 26
+#define mccompcurindex 27
 #define mos_rms_y mccanalyzer_mos_rms_y
 #define mos_rms_z mccanalyzer_mos_rms_z
 #define mos_rms_max mccanalyzer_mos_rms_max
@@ -23823,7 +24547,7 @@ MCNUM order = mccanalyzer_order;
      }
    }
 }
-#line 23794 "./ThALES_resolution_v2.c"
+#line 24515 "./ThALES_resolution_v2.c"
 }   /* End of analyzer=Monochromator_curved() SETTING parameter declarations. */
 #undef tiltV
 #undef tiltH
@@ -23846,7 +24570,7 @@ MCNUM order = mccanalyzer_order;
   printf("MCDISPLAY: component %s\n", "Ana_Out");
 #define mccompcurname  Ana_Out
 #define mccompcurtype  Arm
-#define mccompcurindex 27
+#define mccompcurindex 28
 #line 40 "/usr/share/mcstas/2.7.1/tools/Python/mcrun/../mccodelib/../../../optics/Arm.comp"
 {
   /* A bit ugly; hard-coded dimensions. */
@@ -23855,7 +24579,7 @@ MCNUM order = mccanalyzer_order;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 23826 "./ThALES_resolution_v2.c"
+#line 24547 "./ThALES_resolution_v2.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -23865,7 +24589,7 @@ MCNUM order = mccanalyzer_order;
   printf("MCDISPLAY: component %s\n", "slit");
 #define mccompcurname  slit
 #define mccompcurtype  Slit
-#define mccompcurindex 28
+#define mccompcurindex 29
 {   /* Declarations of slit=Slit() SETTING parameters. */
 MCNUM xmin = mccslit_xmin;
 MCNUM xmax = mccslit_xmax;
@@ -23897,7 +24621,7 @@ MCNUM yheight = mccslit_yheight;
     circle("xy",0,0,0,radius);
   }
 }
-#line 23868 "./ThALES_resolution_v2.c"
+#line 24589 "./ThALES_resolution_v2.c"
 }   /* End of slit=Slit() SETTING parameter declarations. */
 #undef mccompcurname
 #undef mccompcurtype
@@ -23908,7 +24632,7 @@ MCNUM yheight = mccslit_yheight;
   printf("MCDISPLAY: component %s\n", "PSD_det");
 #define mccompcurname  PSD_det
 #define mccompcurtype  PSD_monitor
-#define mccompcurindex 29
+#define mccompcurindex 30
 #define PSD_N mccPSD_det_PSD_N
 #define PSD_p mccPSD_det_PSD_p
 #define PSD_p2 mccPSD_det_PSD_p2
@@ -23933,7 +24657,7 @@ int nowritefile = mccPSD_det_nowritefile;
     (double)xmin, (double)ymax, 0.0,
     (double)xmin, (double)ymin, 0.0);
 }
-#line 23904 "./ThALES_resolution_v2.c"
+#line 24625 "./ThALES_resolution_v2.c"
 }   /* End of PSD_det=PSD_monitor() SETTING parameter declarations. */
 #undef PSD_p2
 #undef PSD_p
@@ -23947,7 +24671,7 @@ int nowritefile = mccPSD_det_nowritefile;
   printf("MCDISPLAY: component %s\n", "res_monitor");
 #define mccompcurname  res_monitor
 #define mccompcurtype  Res_monitor
-#define mccompcurindex 30
+#define mccompcurindex 31
 #define res_sample_comp mccres_monitor_res_sample_comp
 #define DEFS mccres_monitor_DEFS
 #define Vars mccres_monitor_Vars
@@ -23971,7 +24695,7 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
 {
   Monitor_nD_McDisplay(&DEFS, &Vars);
 }
-#line 23942 "./ThALES_resolution_v2.c"
+#line 24663 "./ThALES_resolution_v2.c"
 }   /* End of res_monitor=Res_monitor() SETTING parameter declarations. */
 #undef buffer_index
 #undef Vars
@@ -23986,7 +24710,7 @@ MCNUM restore_neutron = mccres_monitor_restore_neutron;
   printf("MCDISPLAY: component %s\n", "detector_all");
 #define mccompcurname  detector_all
 #define mccompcurtype  Monitor
-#define mccompcurindex 31
+#define mccompcurindex 32
 #define Nsum mccdetector_all_Nsum
 #define psum mccdetector_all_psum
 #define p2sum mccdetector_all_p2sum
@@ -24007,7 +24731,7 @@ MCNUM restore_neutron = mccdetector_all_restore_neutron;
                (double)xmin, (double)ymax, 0.0,
                (double)xmin, (double)ymin, 0.0);
 }
-#line 23978 "./ThALES_resolution_v2.c"
+#line 24699 "./ThALES_resolution_v2.c"
 }   /* End of detector_all=Monitor() SETTING parameter declarations. */
 #undef p2sum
 #undef psum

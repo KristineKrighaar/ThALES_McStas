@@ -1,0 +1,154 @@
+McStas simulation description file for ThALES_double_peak10.
+Date:    Wed Jan  5 10:44:18 2022
+Program: McStas 2.7.1 - Oct. 04, 2021
+
+begin instrument: ThALES_double_peak10
+  File: test_vana_1/13/mccode
+  Source: ThALES_resolution_v2.instr
+  Parameters:  ThALES_dE(double) A3(double) A4(double) Ei(double) Ef(double) q_x_elastic(double) q_z_elastic(double) SAMPLE(double)
+  Trace_enabled: yes
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation: test_vana_1/13
+  Format: McCode with text headers
+  URL: http://www.mccode.org
+  Creator: McStas 2.7.1 - Oct. 04, 2021
+  Instrument: ThALES_resolution_v2.instr
+  Ncount: 10000000
+  Trace: no
+  Gravitation: no
+  Seed: 1641420849
+  Directory: test_vana_1/13
+  Nodes: 4
+  Param: ThALES_dE=0.5
+  Param: A3=0
+  Param: A4=20
+  Param: Ei=5.15
+  Param: Ef=5
+  Param: q_x_elastic=1.3139
+  Param: q_z_elastic=0.146
+  Param: SAMPLE=1
+end simulation
+
+begin data
+  Date: Wed Jan  5 10:44:20 2022 (1641375860)
+  type: array_1d(200)
+  Source: ThALES_double_peak10 (ThALES_resolution_v2.instr)
+  component: l_monitor
+  position: 0.426111 0 17.3281
+  title: Wavelength monitor
+  Ncount: 10000000
+  filename: lambda_slit_mono.dat
+  statistics: X0=3.99688; dX=0.112352;
+  signal: Min=0; Max=2.70726e+10; Mean=1.02287e+09;
+  values: 2.04574e+11 2.99912e+08 878788
+  xvar: L
+  yvar: (I,I_err)
+  xlabel: Wavelength [AA]
+  ylabel: Intensity
+  xlimits: 0 10
+  variables: L I I_err N
+end data
+
+begin data
+  Date: Wed Jan  5 10:44:20 2022 (1641375860)
+  type: array_1d(200)
+  Source: ThALES_double_peak10 (ThALES_resolution_v2.instr)
+  component: E_sample_mon
+  position: 2.35615 0 19.8525
+  title: Energy monitor
+  Ncount: 10000000
+  filename: E_sample_mon.dat
+  statistics: X0=5.14412; dX=0.0578842;
+  signal: Min=0; Max=2.31476e+08; Mean=3.35364e+07;
+  values: 6.70728e+09 5.597e+07 17034
+  xvar: E
+  yvar: (I,I_err)
+  xlabel: Energy [meV]
+  ylabel: Intensity
+  xlimits: 4.65 5.65
+  variables: E I I_err N
+end data
+
+begin data
+  Date: Wed Jan  5 10:44:20 2022 (1641375860)
+  type: array_2d(200, 200)
+  Source: ThALES_double_peak10 (ThALES_resolution_v2.instr)
+  component: PSD_sample_mon
+  position: 2.35711 0 19.8528
+  title: PSD monitor
+  Ncount: 10000000
+  filename: PSD_sample_mon.dat
+  statistics: X0=0.0171147; dX=0.983865; Y0=0.00658358; dY=0.924395;
+  signal: Min=0; Max=2.90721e+06; Mean=167682;
+  values: 6.70728e+09 5.597e+07 17034
+  xvar: X
+  yvar: Y
+  xlabel: X position [cm]
+  ylabel: Y position [cm]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -2.5 2.5 -2.5 2.5
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Jan  5 10:44:20 2022 (1641375860)
+  type: array_2d(200, 200)
+  Source: ThALES_double_peak10 (ThALES_resolution_v2.instr)
+  component: PSD_analyzer
+  position: 3.42816 0 20.6003
+  title: PSD monitor
+  Ncount: 10000000
+  filename: PSD_ana.dat
+  statistics: X0=-0.0141293; dX=0.866008; Y0=0.0313981; dY=1.1648;
+  signal: Min=0; Max=36.6058; Mean=0.240906;
+  values: 9636.24 148.423 5463
+  xvar: X
+  yvar: Y
+  xlabel: X position [cm]
+  ylabel: Y position [cm]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -12.5 12.5 -12.5 12.5
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Jan  5 10:44:20 2022 (1641375860)
+  type: array_2d(200, 200)
+  Source: ThALES_double_peak10 (ThALES_resolution_v2.instr)
+  component: PSD_det
+  position: 3.9292 0 20.2023
+  title: PSD monitor
+  Ncount: 10000000
+  filename: PSD_det.dat
+  statistics: X0=-0.886916; dX=0.315051; Y0=0.0428928; dY=0.814489;
+  signal: Min=0; Max=12.3606; Mean=0.0216401;
+  values: 865.605 44.3555 508
+  xvar: X
+  yvar: Y
+  xlabel: X position [cm]
+  ylabel: Y position [cm]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -10 10 -10 10
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Jan  5 10:44:20 2022 (1641375860)
+  type: array_0d
+  Source: ThALES_double_peak10 (ThALES_resolution_v2.instr)
+  component: detector_all
+  position: 3.93006 0 20.2016
+  title: Single monitor detector_all
+  Ncount: 10000000
+  statistics: None
+  signal: None
+  values: 865.605 44.3555 508
+  xylimits: 0 0 0 0 0 0
+  variables: I I_err N
+end data

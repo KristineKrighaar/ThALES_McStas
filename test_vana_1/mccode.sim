@@ -1,0 +1,27 @@
+begin instrument:
+  Creator: mcstas 2.7.1
+  Source: ThALES_resolution_v2.instr
+  Parameters:  Ei
+  Trace_enabled: no
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation
+Date: Wed Jan 05 10 43 2022
+Ncount: 10000000
+Numpoints: 2
+Param: Ei = 4.5, Ei = 5.5
+end simulation
+
+begin data
+type: multiarray_1d(2)
+title: Scan of Ei
+xvars: Ei
+yvars: (l_monitor_I,l_monitor_ERR) (E_sample_mon_I,E_sample_mon_ERR) (PSD_sample_mon_I,PSD_sample_mon_ERR) (PSD_analyzer_I,PSD_analyzer_ERR) (PSD_det_I,PSD_det_ERR) (detector_all_I,detector_all_ERR)
+xlabel: 'Ei'
+ylabel: 'Intensity'
+xlimits: 4.5 5.5
+filename: mccode.dat
+variables: Ei l_monitor_I l_monitor_ERR E_sample_mon_I E_sample_mon_ERR PSD_sample_mon_I PSD_sample_mon_ERR PSD_analyzer_I PSD_analyzer_ERR PSD_det_I PSD_det_ERR detector_all_I detector_all_ERR
+end data
