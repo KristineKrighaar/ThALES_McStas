@@ -2,7 +2,7 @@
  * Format:     ANSI C source code
  * Creator:    McStas <http://www.mcstas.org>
  * Instrument: ThALES_resolution_v2.instr (ThALES_double_peak10)
- * Date:       Wed Jan  5 10:43:35 2022
+ * Date:       Fri Jan  7 15:12:27 2022
  * File:       ./ThALES_resolution_v2.c
  * Compile:    cc -o ThALES_double_peak10.out ./ThALES_resolution_v2.c 
  * CFLAGS=
